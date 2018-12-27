@@ -1,0 +1,65 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <link rel="shortcut icon" href="{{ url_for('static',
+            filename='favicon.ico') }}">
+        <title>Blockforce Labs</title>
+        <script
+            src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script src="/static/js/highstock/js/highstock.js"></script>
+        <script src="/static/js/highstock/js/modules/exporting.js"></script>
+        <script src="/static/js/IndexSharedFunctions2.js"></script>
+        <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,300,700' rel='stylesheet' type='text/css'>
+    </head>
+    <body>
+        <div id="top_left_column" style="float:left; width: 80%;display:
+            inline-block;">
+            <center>
+                <div id="container" style="height: 600px; width: 100%"></div>
+            </center>
+        </div>
+        <div id="top_right_column" style="float:right; width:18%;">
+            <table style="width:100%;font-size:14px;padding:0px">
+                <thead style="text-align:center">
+                    <tr>
+                    <th style="color:#C7A967;background-color:#000"
+                            scope="col">KEY STATS<sup>*</sup></th>
+                    </tr>
+                </thead>
+                <tbody style="text-align:center">
+                    <tr>
+                        <td>ANN. RETURN<br><span style="font-size:16px"><b
+                                    id="annualReturn"></b></span></td>
+                    </tr>
+                    <tr>
+                        <td>ANN. RISK<br><span style="font-size:16px"><b
+                                    id="annualRisk"></b></span></td>
+                    </tr>
+                    <tr>
+                        <td>SHARPE RATIO<br><span style="font-size:16px"><b
+                                    id="sharpe"></b></span></td>
+                    </tr>
+                    <tr>
+                        <td>SORTINO RATIO<br><span style="font-size:16px"><b
+                                    id="sortino"></b></span></td>
+                    </tr>
+                    <tr>
+                        <td>CORRELATION<br><span style="font-size:16px"><b
+                                    id="correlation"></b></span></td>
+                    </tr>
+                    <tr>
+                        <td>ALPHA<br><span style="font-size:16px"><b id="alpha"></b></span></td>
+                    </tr>
+                    <tr>
+                        <td>BETA<br><span style="font-size:16px"><b id="beta"></b></span></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+
+
+
+            <script src="/static/js/backtest_chart.js"></script>
+        </body>
+    </html>
