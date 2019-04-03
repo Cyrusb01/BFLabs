@@ -46,7 +46,7 @@ conn,cur,engine = get_conn()
 
 def get_files_symbols():
 
-    files = glob.glob("*.csv")
+    files = glob.glob("data/*.csv")
 
     slist = []
     for xf in files:
