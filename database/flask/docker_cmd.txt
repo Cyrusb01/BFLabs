@@ -1,0 +1,10 @@
+docker build -t bflabs_flask .
+
+# the following works on the aws instance
+
+docker run --add-host="postgreshost:172.17.0.1" -d -p 5005:5005 --restart always --name bflabs bflabs_flask
+
+# must configure postgres to (a) listen to all ips (make sure to have a firewall!) and allow
+# login in pg_hba.conf
+
+

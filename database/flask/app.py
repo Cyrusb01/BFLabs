@@ -7,6 +7,9 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import create_engine, func, and_, or_
 from sqlalchemy.ext.automap import automap_base
 from sqlalchemy.orm import Session
+import logging
+from logging.handlers import RotatingFileHandler
+from werkzeug.contrib.fixers import ProxyFix
 
 import config as cf
 
@@ -14,6 +17,8 @@ cstr = f"postgresql://{cf.psql_user}:{cf.psql_pass}@"\
        f"{cf.psql_host}/{cf.dbname}"
 
 app = Flask(__name__)
+app.wsgi_app = ProxyFix(app.wsgi_app, num_proxies=1)
+
 app.config['SQLALCHEMY_DATABASE_URI'] = cstr
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
@@ -58,6 +63,8 @@ def load_daily():
     
     return jsonify(res)
     
-
-
+if __name__ == "__main__":
+    gunicorn_logger = logging.getLogger('gunicorn.error')
+    app.logger.handlers = gunicorn_logger.handlers
+    app.run(debug=False,host='127.0.0.1',port='5005')
 
