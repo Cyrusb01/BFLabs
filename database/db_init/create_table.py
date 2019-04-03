@@ -29,13 +29,14 @@ query = f"create database {dbname}"
 cur.execute(query)
 conn.commit()
 
+# now connect to our table
 psql_user = cf.psql_user
 psql_pass = cf.psql_pass
 psql_host = 'localhost'
 connection_string = ("dbname='%s' "
                      "user='%s' "
                      "host='%s' "
-                     "password='%s'" % (xdbname,
+                     "password='%s'" % (dbname,
                                         psql_user, psql_host, psql_pass))
 conn = psycopg2.connect(connection_string)
 cur = conn.cursor(cursor_factory=DictCursor)
