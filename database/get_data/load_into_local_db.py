@@ -76,6 +76,8 @@ def process_file(sd):
     conn.commit()
 
     # fill with new data
+    if 'n_trades' not in df.columns:
+        df['n_trades'] = -1
     df.to_sql('coindata_day',engine,
               if_exists='append',
               index=False)
@@ -88,6 +90,7 @@ if __name__ == "__main__":
     slist = get_files_symbols()
 
     for sd in slist:
+        print(sd)
         process_file(sd)
 
 
