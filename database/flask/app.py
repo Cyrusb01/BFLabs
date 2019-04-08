@@ -34,7 +34,6 @@ corr = create_corr(pairs, db, coindata_day)
 today = datetime.datetime.utcnow().strftime('%Y-%m-%d')
 ids_heatmap, graphJSON_heatmap = graph_heatmap(corr, today)
 
-@app.route('/')
 @app.route('/heatmap')
 def heatmap():
     return render_template('heatmap.html', ids=ids_heatmap, graphJSON=graphJSON_heatmap)
