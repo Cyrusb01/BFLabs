@@ -30,12 +30,12 @@ db.Model.prepare(db.engine,reflect=True)
 coindata_day = db.Model.classes.coindata_day
 
 pairs = ['BTC-USDT', 'BCHABC-USDT', 'TRX-USDT', 'IOTA-USDT', 'XLM-USDT', 'EOS-USDT','XRP-USDT', 'ADA-USDT','LTC-USDT', 'NEO-USDT', 'BNB-USDT', 'ETH-USDT']
-corr = create_corr(pairs, db, coindata_day)
-today = datetime.datetime.utcnow().strftime('%Y-%m-%d')
-ids_heatmap, graphJSON_heatmap = graph_heatmap(corr, today)
 
 @app.route('/heatmap')
 def heatmap():
+    corr = create_corr(pairs, db, coindata_day)
+    today = datetime.datetime.utcnow().strftime('%Y-%m-%d')
+    ids_heatmap, graphJSON_heatmap = graph_heatmap(corr, today)
     return render_template('heatmap.html', ids=ids_heatmap, graphJSON=graphJSON_heatmap)
 
 @app.route('/api/v1/load_daily',methods=['GET'])
