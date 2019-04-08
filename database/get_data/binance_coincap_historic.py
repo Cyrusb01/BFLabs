@@ -23,6 +23,7 @@ sd['NEO'] = 'neo'
 sd['BCHABC'] = 'bitcoin-cash'
 sd['BNB'] = 'binance-coin'
 sd['BTC'] = 'bitcoin'
+sd['EOS'] = 'eos'
 
 def get_data(symbol,ts_start,ts_end):
 
@@ -77,6 +78,9 @@ if __name__ == '__main__':
         if sdd['exid'] != 0:
             continue
 
+        if sdd['symb'] != 'EOS-USDT':
+            continue
+        
         ts_start = int(parse('2017-01-01T00:00:00Z').timestamp())
         ts_end = int(parse('2019-01-01T00:00:00Z').timestamp())
 #        ts_end = int(parse(datetime.datetime\

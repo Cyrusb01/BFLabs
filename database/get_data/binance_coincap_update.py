@@ -27,6 +27,7 @@ sd['NEO'] = 'neo'
 sd['BCHABC'] = 'bitcoin-cash'
 sd['BNB'] = 'binance-coin'
 sd['BTC'] = 'bitcoin'
+sd['EOS'] = 'eos'
 
 def get_conn():
     not_done = True
