@@ -13,6 +13,7 @@ from werkzeug.contrib.fixers import ProxyFix
 from helpers import graph_heatmap, create_corr
 from variables import IMG, RANGE, ANNOT, PLOT_CONFIG, XAXIS, YAXIS, COLORSCALE
 import datetime
+import pytz
 import config as cf
 
 cstr = f"postgresql://{cf.psql_user}:{cf.psql_pass}@"\
@@ -52,7 +53,7 @@ def update_heatmap(d):
 
 @app.route('/heatmap')
 def heatmap():
-    today = datetime.datetime.utcnow().date()
+    today = datetime.datetime.now(tz=pytz.utc).date()
 
     if(LAST_UPDATE_HEATMAP < today):
         update_heatmap(today)
