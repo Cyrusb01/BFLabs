@@ -2,7 +2,7 @@
 import sys
 import pandas as pd
 import json
-from flask import Flask,jsonify,request,Response
+from flask import Flask,jsonify,request,Response,render_template
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import create_engine, func, and_, or_
 from sqlalchemy.ext.automap import automap_base
@@ -10,9 +10,9 @@ from sqlalchemy.orm import Session
 import logging
 from logging.handlers import RotatingFileHandler
 from werkzeug.contrib.fixers import ProxyFix
-from helpers import create_corr, graph_heatmap
+from helpers import graph_heatmap, create_corr
 from variables import IMG, RANGE, ANNOT, PLOT_CONFIG, XAXIS, YAXIS, COLORSCALE
-
+import datetime
 import config as cf
 
 cstr = f"postgresql://{cf.psql_user}:{cf.psql_pass}@"\
@@ -29,32 +29,15 @@ db.Model = automap_base()
 db.Model.prepare(db.engine,reflect=True)
 coindata_day = db.Model.classes.coindata_day
 
-def get_coin_data(symbol):
-    query = db.session.query(coindata_day)\
-            .filter(coindata_day.symbolpair == symbol.upper())\
-            .order_by(coindata_day.timestamp)
-    try:
-        df = pd.read_sql(query.statement, query.session.bind)
-    
-    except:
-        rd = {'msg': 'database query failed'}
-        return json.dumps(rd)
-        
-    if df is None or len(df) < 1:
-        rd = {'msg': 'no data'}
-        return json.dumps(rd)
+pairs = ['BTC-USDT', 'BCHABC-USDT', 'TRX-USDT', 'IOTA-USDT', 'XLM-USDT', 'EOS-USDT','XRP-USDT', 'ADA-USDT','LTC-USDT', 'NEO-USDT', 'BNB-USDT', 'ETH-USDT']
+corr = create_corr(pairs, db, coindata_day)
+today = datetime.datetime.utcnow().strftime('%Y-%m-%d')
+ids_heatmap, graphJSON_heatmap = graph_heatmap(corr, today)
 
-    res = df[ ['timestamp','price_open','price_high',\
-               'price_low','price_close','n_trades',\
-               'volume' ]].to_dict(orient='list')
-    return res
-
-corr = create_corr(pairs, db)
-
+@app.route('/')
 @app.route('/heatmap')
 def heatmap():
     return render_template('heatmap.html', ids=ids_heatmap, graphJSON=graphJSON_heatmap)
-
 
 @app.route('/api/v1/load_daily',methods=['GET'])
 def load_daily():

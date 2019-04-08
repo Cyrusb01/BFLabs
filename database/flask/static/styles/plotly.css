@@ -1,0 +1,29 @@
+.plot-container > .svg-container{
+    margin: 0 auto !important;
+    position: relative !important;
+}
+
+body{
+    background-color: #000000;
+    font-family: 'Open Sans', sans-serif;
+    color: #6a859c;
+    font-size: 16px;
+    line-height: 20px;
+}
+
+.section-heading.centered.white {
+    margin-top: 2rem;
+    margin-bottom: 4rem;
+    padding-top: 0px;
+    color: #f0f0f0;
+    font-weight: 400;
+    text-align: center;
+}
+
+.section-heading.centered {
+    font-size: 30px;
+    font-weight: 400;
+    text-align: center;
+    letter-spacing: 5px;
+    text-transform: uppercase;
+}

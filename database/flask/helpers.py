@@ -5,10 +5,30 @@ import plotly.graph_objs as go
 import json
 from variables import IMG, RANGE, ANNOT, PLOT_CONFIG, XAXIS, YAXIS, COLORSCALE
 
-def create_corr(pairs, db):
+def get_coin_data(symbol, db, coindata_day):
+    query = db.session.query(coindata_day)\
+            .filter(coindata_day.symbolpair == symbol.upper())\
+            .order_by(coindata_day.timestamp)
+    try:
+        df = pd.read_sql(query.statement, query.session.bind)
+    
+    except:
+        rd = {'msg': 'database query failed'}
+        return json.dumps(rd)
+        
+    if df is None or len(df) < 1:
+        rd = {'msg': 'no data'}
+        return json.dumps(rd)
+
+    res = df[ ['timestamp','price_open','price_high',\
+               'price_low','price_close','n_trades',\
+               'volume' ]].to_dict(orient='list')
+    return res
+
+def create_corr(pairs, db, coindata_day):
     vals = dict()
     for sp in pairs:
-        data = get_coin_data(sp, db)
+        data = get_coin_data(sp, db, coindata_day)
         if(len(data)<7): #bad data
             continue
         df = pd.DataFrame(data)
@@ -64,5 +84,4 @@ def graph_heatmap(df, date):
     ]
     ids = ["graph-{}".format(i) for i, _ in enumerate(graphs)]
     graphJSON = json.dumps(graphs, cls=plotly.utils.PlotlyJSONEncoder)
-    print(graphJSON)
     return ids, graphJSON

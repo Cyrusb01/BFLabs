@@ -23,8 +23,9 @@ PLOT_CONFIG ={'showAxisDragHandles': False, 'toImageButtonOptions': {
         'width': 1000,
         'scale': 1 # Multiply title/legend/axis/canvas sizes by this factor
           }, 'showLink':False,
-                'modeBarButtonsToRemove':['sendDataToCloud','zoomIn2d', 'zoomOut2d','zoom2d','pan2d','select2d',\
-                                      'lasso2d','zoom3d','pan3d','orbitRotation','tableRotation']}
+        'modeBarButtonsToRemove':['sendDataToCloud','zoomIn2d', 'zoomOut2d','zoom2d','pan2d','select2d',\
+                                      'lasso2d','zoom3d','pan3d','orbitRotation','tableRotation'],
+        'displaylogo':False}
 
 YAXIS = dict(hoverformat = '.2f',autorange=True,\
                     ticks='inside',  tickcolor='#53585f', ticklen=8, tickwidth=3,automargin=True, tickprefix="          ")
