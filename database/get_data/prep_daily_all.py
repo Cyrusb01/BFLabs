@@ -122,7 +122,6 @@ def handle_symbol(symb,exid,start):
     ind = np.where( (intimes > ts_start - period_secs) & \
                       (intimes <= ts_start) )
     
-     
     xopen[0] = indata[ ind[0][0] , 0]
     xhigh[0] = indata[ ind[0] , 1].max()
     xlow[0] = indata[ ind[0] , 2].min()
@@ -147,7 +146,6 @@ def handle_symbol(symb,exid,start):
             print(xtimes[i-1])
             print(xtimes[-1])
             raise Exception("Bad error in downsampling!")
-
             
     # reassign
     xdf.loc[:,'price_open'] = xopen

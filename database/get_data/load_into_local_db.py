@@ -42,8 +42,6 @@ def get_conn():
 
 conn,cur,engine = get_conn()
 
-
-
 def get_files_symbols():
 
     files = glob.glob("data/*.csv")

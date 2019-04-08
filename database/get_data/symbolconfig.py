@@ -7,9 +7,14 @@ sd['start'] = parse('2017-01-01T00:00:00Z')
 sd['exid'] = 701
 slist.append(sd)
 
-
 sd = {}
 sd['symb'] = 'ETH-USDT'
+sd['start'] = parse('2017-01-01T00:00:00Z')
+sd['exid'] = 0
+slist.append(sd)
+
+sd = {}
+sd['symb'] = 'EOS-USDT'
 sd['start'] = parse('2017-01-01T00:00:00Z')
 sd['exid'] = 0
 slist.append(sd)

@@ -11,6 +11,7 @@ from dateutil.parser import parse
 
 sd = {}
 sd['ETH'] = 'ethereum'
+sd['EOS'] = 'eos'
 sd['USDT'] = 'tether'
 sd['TRX'] = 'tron'
 sd['IOTA'] = 'iota'
@@ -43,13 +44,10 @@ def get_data(symbol,ts_start,ts_end):
 
         if 'data' not in res.keys():
             print(res)
-
         
     except:
         print("do something")
         return
-    
-
     
     if len(res['data']) > 0:
         df = pd.DataFrame(res['data'])

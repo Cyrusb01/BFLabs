@@ -10,6 +10,8 @@ from sqlalchemy.orm import Session
 import logging
 from logging.handlers import RotatingFileHandler
 from werkzeug.contrib.fixers import ProxyFix
+from helpers import create_corr, graph_heatmap
+from variables import IMG, RANGE, ANNOT, PLOT_CONFIG, XAXIS, YAXIS, COLORSCALE
 
 import config as cf
 
@@ -27,6 +29,31 @@ db.Model = automap_base()
 db.Model.prepare(db.engine,reflect=True)
 coindata_day = db.Model.classes.coindata_day
 
+def get_coin_data(symbol):
+    query = db.session.query(coindata_day)\
+            .filter(coindata_day.symbolpair == symbol.upper())\
+            .order_by(coindata_day.timestamp)
+    try:
+        df = pd.read_sql(query.statement, query.session.bind)
+    
+    except:
+        rd = {'msg': 'database query failed'}
+        return json.dumps(rd)
+        
+    if df is None or len(df) < 1:
+        rd = {'msg': 'no data'}
+        return json.dumps(rd)
+
+    res = df[ ['timestamp','price_open','price_high',\
+               'price_low','price_close','n_trades',\
+               'volume' ]].to_dict(orient='list')
+    return res
+
+corr = create_corr(pairs, db)
+
+@app.route('/heatmap')
+def heatmap():
+    return render_template('heatmap.html', ids=ids_heatmap, graphJSON=graphJSON_heatmap)
 
 
 @app.route('/api/v1/load_daily',methods=['GET'])
@@ -36,7 +63,6 @@ def load_daily():
     symbol = None
     if request.args.get('symbol') is not None:
         symbol = request.args['symbol']
-
         
     if symbol is not None:
         query = db.session.query(coindata_day)\
