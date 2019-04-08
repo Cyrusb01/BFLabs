@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=1024">
+        <title>Blockforce Labs - Correlation Heat Map</title>
+        <link type="text/css" href="{{ url_for('static',filename='styles/plotly.css') }}" rel="stylesheet">
+        <script src="https://cdn.plot.ly/plotly-latest.js" charset="utf-8"></script>
+</head>
+<body>      
+    <article>
+        {% block content %}
+            <h2 class="section-heading centered white">Crypto Heat Map Correlations</h2>
+        {% endblock %}
+
+        {% for id in ids %}
+            <section class="center" id="{{id}}"></section>
+        {% endfor %}
+    </article>
+</body>
+
+<script type="text/javascript">
+    const graphs = {{graphJSON | safe}};
+    const ids = {{ids | safe}};
+
+    var config_heatmap={'showAxisDragHandles': false, 'toImageButtonOptions': {'format': 'png',
+    'filename': 'blockforcecapital_crypto_correlation', 'height': 600,'width': 600,'scale': 1}, 'showLink':false,
+    'modeBarButtonsToRemove':['sendDataToCloud','zoomIn2d', 'zoomOut2d','zoom2d','pan2d','select2d',
+          'lasso2d','autoScale2d','zoom3d','pan3d','orbitRotation','tableRotation', 'hoverClosestCartesian',
+          'hoverCompareCartesian', 'toggleSpikelines'],
+        displaylogo:false}
+    for(let i in graphs){
+        Plotly.plot(ids[i], graphs[i].data, graphs[i].layout, config_heatmap);
+    }
+</script>
+</html>

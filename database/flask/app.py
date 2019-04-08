@@ -2,7 +2,7 @@
 import sys
 import pandas as pd
 import json
-from flask import Flask,jsonify,request,Response
+from flask import Flask,jsonify,request,Response,render_template
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import create_engine, func, and_, or_
 from sqlalchemy.ext.automap import automap_base
@@ -10,7 +10,9 @@ from sqlalchemy.orm import Session
 import logging
 from logging.handlers import RotatingFileHandler
 from werkzeug.contrib.fixers import ProxyFix
-
+from helpers import graph_heatmap, create_corr
+from variables import IMG, RANGE, ANNOT, PLOT_CONFIG, XAXIS, YAXIS, COLORSCALE
+import datetime
 import config as cf
 
 cstr = f"postgresql://{cf.psql_user}:{cf.psql_pass}@"\
@@ -27,7 +29,14 @@ db.Model = automap_base()
 db.Model.prepare(db.engine,reflect=True)
 coindata_day = db.Model.classes.coindata_day
 
+pairs = ['BTC-USDT', 'BCHABC-USDT', 'TRX-USDT', 'IOTA-USDT', 'XLM-USDT', 'EOS-USDT','XRP-USDT', 'ADA-USDT','LTC-USDT', 'NEO-USDT', 'BNB-USDT', 'ETH-USDT']
+corr = create_corr(pairs, db, coindata_day)
+today = datetime.datetime.utcnow().strftime('%Y-%m-%d')
+ids_heatmap, graphJSON_heatmap = graph_heatmap(corr, today)
 
+@app.route('/heatmap')
+def heatmap():
+    return render_template('heatmap.html', ids=ids_heatmap, graphJSON=graphJSON_heatmap)
 
 @app.route('/api/v1/load_daily',methods=['GET'])
 def load_daily():
@@ -36,7 +45,6 @@ def load_daily():
     symbol = None
     if request.args.get('symbol') is not None:
         symbol = request.args['symbol']
-
         
     if symbol is not None:
         query = db.session.query(coindata_day)\
