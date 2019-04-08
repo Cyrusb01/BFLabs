@@ -30,12 +30,33 @@ db.Model.prepare(db.engine,reflect=True)
 coindata_day = db.Model.classes.coindata_day
 
 pairs = ['BTC-USDT', 'BCHABC-USDT', 'TRX-USDT', 'IOTA-USDT', 'XLM-USDT', 'EOS-USDT','XRP-USDT', 'ADA-USDT','LTC-USDT', 'NEO-USDT', 'BNB-USDT', 'ETH-USDT']
-corr = create_corr(pairs, db, coindata_day)
-today = datetime.datetime.utcnow().strftime('%Y-%m-%d')
-ids_heatmap, graphJSON_heatmap = graph_heatmap(corr, today)
+
+LAST_UPDATE_HEATMAP = datetime.datetime(2019,1,1).date()
+ids_heatmap = None
+graphJSON_heatmap=None
+corr_df = None
+
+def update_heatmap(d):
+    global corr_df
+    global LAST_UPDATE_HEATMAP
+    global ids_heatmap
+    global graphJSON_heatmap
+    
+    corr_df = create_corr(pairs, db, coindata_day)
+    ids, graphJSON = graph_heatmap(corr_df, d.strftime('%Y-%m-%d'))
+    ids_heatmap = ids
+    graphJSON_heatmap = graphJSON
+
+    LAST_UPDATE_HEATMAP = d #update last update
+
 
 @app.route('/heatmap')
 def heatmap():
+    today = datetime.datetime.utcnow().date()
+
+    if(LAST_UPDATE_HEATMAP < today):
+        update_heatmap(today)
+
     return render_template('heatmap.html', ids=ids_heatmap, graphJSON=graphJSON_heatmap)
 
 @app.route('/api/v1/load_daily',methods=['GET'])
