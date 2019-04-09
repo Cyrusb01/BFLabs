@@ -52,7 +52,7 @@ pairs = ['BTC-USDT', 'BCHABC-USDT', 'TRX-USDT', 'IOTA-USDT', 'XLM-USDT', 'EOS-US
 ids_heatmap = None
 graphJSON_heatmap=None
 corr_df = None
-LAST_UPDATE_DATE = datetime.datetime.now(tz=pytz.utc).date()
+LAST_UPDATE_DATE = datetime.datetime(2019,1,1, tz=pytz.utc).date()
 
 def update_heatmap(d):
 '''
