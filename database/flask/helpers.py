@@ -25,6 +25,7 @@ def get_coin_data(symbol, db, coindata_day):
                'volume' ]].to_dict(orient='list')
     return res
 
+
 def create_corr(pairs, db, coindata_day):
     vals = dict()
     for sp in pairs:

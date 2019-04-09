@@ -30,35 +30,55 @@ db.Model = automap_base()
 db.Model.prepare(db.engine,reflect=True)
 coindata_day = db.Model.classes.coindata_day
 
+def check_latest(db, coindata_day):
+'''     
+Find the highest value UNIX timestamp in database
+
+Inputs
+------
+db - database connection
+coindata_day - table in database
+
+Outputs
+-------
+query (datetime.date) - object with most recent update  
+'''
+        query = db.session.query(func.max(coindata_day.timestamp))
+	query_date = datetime.fromtimestamp(query, tz=pytz.utc).date()
+        return query_date
+
 pairs = ['BTC-USDT', 'BCHABC-USDT', 'TRX-USDT', 'IOTA-USDT', 'XLM-USDT', 'EOS-USDT','XRP-USDT', 'ADA-USDT','LTC-USDT', 'NEO-USDT', 'BNB-USDT', 'ETH-USDT']
 
-LAST_UPDATE_HEATMAP = datetime.datetime(2019,1,1).date()
 ids_heatmap = None
 graphJSON_heatmap=None
 corr_df = None
+LAST_UPDATE_DATE = datetime.datetime.now(tz=pytz.utc).date()
 
 def update_heatmap(d):
+'''
+Function called when there is new data in DB to rebuild heatmap plot
+'''
+    #define vars as in global namespace
     global corr_df
-    global LAST_UPDATE_HEATMAP
     global ids_heatmap
     global graphJSON_heatmap
-    
+    global LAST_UPDATE_DATE
+ 
     corr_df = create_corr(pairs, db, coindata_day)
     ids, graphJSON = graph_heatmap(corr_df, d.strftime('%Y-%m-%d'))
     ids_heatmap = ids
     graphJSON_heatmap = graphJSON
-
-    LAST_UPDATE_HEATMAP = d #update last update
-
+    LAST_UPDATE_DATE = d #update most recent update date
 
 @app.route('/heatmap')
 def heatmap():
-    today = datetime.datetime.now(tz=pytz.utc).date()
+    db_date = check_latest(db, coindata_day)
 
-    if(LAST_UPDATE_HEATMAP < today):
-        update_heatmap(today)
+    if(LAST_UPDATE_DATE < db_date): #most recent date in DB newer than update
+        update_heatmap(db_date)
 
     return render_template('heatmap.html', ids=ids_heatmap, graphJSON=graphJSON_heatmap)
+	
 
 @app.route('/api/v1/load_daily',methods=['GET'])
 def load_daily():
