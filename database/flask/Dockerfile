@@ -10,8 +10,8 @@ ADD gunicorn.conf.py /
 ADD app.py /
 ADD helpers.py /
 ADD variables.py /
-ADD static /
-ADD templates /
+ADD static /static
+ADD templates /templates
 RUN pip3 install -r requirements.txt
 
 CMD ["/usr/bin/supervisord","-c/etc/supervisor/conf.d/supervisord.conf"]

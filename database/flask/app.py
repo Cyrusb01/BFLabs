@@ -34,7 +34,7 @@ pairs = ['BTC-USDT', 'BCHABC-USDT', 'TRX-USDT', 'IOTA-USDT', 'XLM-USDT', 'EOS-US
 
 LAST_UPDATE_HEATMAP = datetime.datetime(2019,1,1).date()
 ids_heatmap = None
-graphJSON_heatmap=None
+graphJSON_heatmap= None
 corr_df = None
 
 def update_heatmap(d):
@@ -44,7 +44,13 @@ def update_heatmap(d):
     global graphJSON_heatmap
     
     corr_df = create_corr(pairs, db, coindata_day)
-    ids, graphJSON = graph_heatmap(corr_df, d.strftime('%Y-%m-%d'))
+
+    # since we're using UTF time, we'll need to use
+    # the close of the previous day.
+    xd = d - datetime.timedelta(days=1)
+    
+    
+    ids, graphJSON = graph_heatmap(corr_df, xd.strftime('%Y-%m-%d'))
     ids_heatmap = ids
     graphJSON_heatmap = graphJSON
 
@@ -54,6 +60,8 @@ def update_heatmap(d):
 @app.route('/heatmap')
 def heatmap():
     today = datetime.datetime.now(tz=pytz.utc).date()
+
+    print(today,LAST_UPDATE_HEATMAP)
 
     if(LAST_UPDATE_HEATMAP < today):
         update_heatmap(today)

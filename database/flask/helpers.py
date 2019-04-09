@@ -59,9 +59,9 @@ def graph_heatmap(df, date):
             source="/static/main-logo-black.png",
             xref="paper", yref="paper",
             x=1.2, y=1.1,
-            sizex=0.32, sizey=0.32,
+            sizex=0.29, sizey=0.29,
             xanchor="right", yanchor="bottom")],
-        title=f'Return Correlation - {date}',
+        title=f'Return Correlation - Close {date}',
         annotations=[
         dict(x=.5,y=-.18,xref='paper',yref='paper',showarrow=False,
             text=f'*6-Month Rolling Correlation of Daily Returns; Source: Binance', font=dict(size=10))
