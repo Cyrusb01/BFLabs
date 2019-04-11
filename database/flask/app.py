@@ -10,7 +10,7 @@ from sqlalchemy.orm import Session
 import logging
 from logging.handlers import RotatingFileHandler
 from werkzeug.contrib.fixers import ProxyFix
-from helpers import graph_heatmap, create_corr
+from helpers import graph_heatmap, create_corr, volatility, calc_volatility, graph_volatility, get_coin_data
 from variables import IMG, RANGE, ANNOT, PLOT_CONFIG, XAXIS, YAXIS, COLORSCALE
 import datetime
 import pytz
@@ -33,9 +33,14 @@ coindata_day = db.Model.classes.coindata_day
 pairs = ['BTC-USDT', 'BCHABC-USDT', 'TRX-USDT', 'IOTA-USDT', 'XLM-USDT', 'EOS-USDT','XRP-USDT', 'ADA-USDT','LTC-USDT', 'NEO-USDT', 'BNB-USDT', 'ETH-USDT']
 
 LAST_UPDATE_HEATMAP = datetime.datetime(2019,1,1).date()
+LAST_UPDATE_VOLATILITY = datetime.datetime(2019,1,1).date()
+
 ids_heatmap = None
 graphJSON_heatmap= None
 corr_df = None
+
+ids_volatility = None
+graphJSON_volatility = None
 
 def update_heatmap(d):
     global corr_df
@@ -49,20 +54,45 @@ def update_heatmap(d):
     # the close of the previous day.
     xd = d - datetime.timedelta(days=1)
     
-    
+    print(corr_df.tail(1))
+    print(LAST_UPDATE_HEATMAP)
     ids, graphJSON = graph_heatmap(corr_df, xd.strftime('%Y-%m-%d'))
     ids_heatmap = ids
     graphJSON_heatmap = graphJSON
 
     LAST_UPDATE_HEATMAP = d #update last update
 
+def update_volatility(d):
+    global corr_df
+    global LAST_UPDATE_VOLATILITY
+    global ids_volatility
+    global graphJSON_volatility
+    
+    df = calc_volatility(pairs, db, coindata_day)
 
+    # since we're using UTF time, we'll need to use
+    # the close of the previous day.
+    xd = d - datetime.timedelta(days=1)
+    
+    ids, graphJSON = graph_volatility(df, pairs)
+    ids_volatility = ids
+    graphJSON_volatility = graphJSON
+    LAST_UPDATE_VOLATILITY = d #update last update
+
+@app.route('/volatility')
+def vol():
+    today = datetime.datetime.now(tz=pytz.utc).date()
+    
+    if(LAST_UPDATE_VOLATILITY < today):
+        update_volatility(today)
+
+    return render_template('volatility.html', ids=ids_volatility, graphJSON=graphJSON_volatility)
+
+    
 @app.route('/heatmap')
 def heatmap():
     today = datetime.datetime.now(tz=pytz.utc).date()
-
-    print(today,LAST_UPDATE_HEATMAP)
-
+    
     if(LAST_UPDATE_HEATMAP < today):
         update_heatmap(today)
 
