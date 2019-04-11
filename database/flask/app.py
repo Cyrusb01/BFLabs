@@ -10,7 +10,7 @@ from sqlalchemy.orm import Session
 import logging
 from logging.handlers import RotatingFileHandler
 from werkzeug.contrib.fixers import ProxyFix
-from helpers import graph_heatmap, create_corr, volatility, calc_volatility, graph_volatility, get_coin_data
+from helpers import graph_heatmap, create_corr, volatility, calc_volatility, graph_volatility, get_coin_data, graph_timeline
 from variables import IMG, RANGE, ANNOT, PLOT_CONFIG, XAXIS, YAXIS, COLORSCALE
 import datetime
 import pytz
@@ -37,6 +37,8 @@ LAST_UPDATE_VOLATILITY = datetime.datetime(2019,1,1).date()
 
 ids_heatmap = None
 graphJSON_heatmap= None
+ids_timeline = None
+graphJSON_timeline= None
 corr_df = None
 
 ids_volatility = None
@@ -47,6 +49,8 @@ def update_heatmap(d):
     global corr_df
     global ids_heatmap
     global graphJSON_heatmap
+    global ids_timeline
+    global graphJSON_timeline
     global LAST_UPDATE_HEATMAP
  
     corr_df = create_corr(pairs, db, coindata_day)
@@ -54,12 +58,15 @@ def update_heatmap(d):
     # since we're using UTF time, we'll need to use
     # the close of the previous day.
     xd = d - datetime.timedelta(days=1)
-    
-    print(corr_df.tail(1))
-    print(LAST_UPDATE_HEATMAP)
+
     ids, graphJSON = graph_heatmap(corr_df, xd.strftime('%Y-%m-%d'))
     ids_heatmap = ids
     graphJSON_heatmap = graphJSON
+
+    ids, graphJSON = graph_timeline(corr_df)
+    ids_timeline = ids
+    graphJSON_timeline = graphJSON
+
     LAST_UPDATE_HEATMAP = d #update last update
 
 def update_volatility(d):
@@ -88,6 +95,15 @@ def vol():
 
     return render_template('volatility.html', ids=ids_volatility, graphJSON=graphJSON_volatility)
 
+
+@app.route('/heatmap_timeline')
+def heatmap_timeline():
+    today = datetime.datetime.now(tz=pytz.utc).date()
+    
+    if(LAST_UPDATE_HEATMAP < today):
+        update_heatmap(today)
+
+    return render_template('heatmap_timeline.html', ids=ids_timeline, graphJSON=graphJSON_timeline)
     
 @app.route('/heatmap')
 def heatmap():
