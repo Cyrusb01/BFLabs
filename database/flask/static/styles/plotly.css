@@ -27,3 +27,11 @@ body{
     letter-spacing: 5px;
     text-transform: uppercase;
 }
+
+footer {
+    padding: 3rem;
+    font-size: 10px;
+    color: #fff;
+    margin-left: 10rem;
+    margin-right: 10rem;
+}

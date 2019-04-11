@@ -96,9 +96,8 @@ def graph_volatility(df, coins):
             x=1.05, y=1.05,
             sizex=0.21, sizey=0.21,
             xanchor="right", yanchor="bottom")],
-        height=800, width=1200,\
+        height=600, width=1000,\
         dragmode='zoom',
-        title='Volatility',
         xaxis=dict(
             title='Date', ticks='inside', ticklen=6, tickwidth=3,
             rangeselector=dict(
@@ -122,17 +121,113 @@ def graph_volatility(df, coins):
             tickcolor='#53585f'
         ),
         yaxis = yaxis_dict,
-        margin=dict(pad=3),
+        automargin=True,
+        margin=dict(pad=0),
         updatemenus=updatemenus,
+        font=dict(size=14),
         annotations=[
-            dict(x=-.1,y=-0.18,xref='paper',yref='paper',showarrow=False,
-                text=f'*Source: {source}', font=dict(size=12))
+            dict(x=-.15,y=-.15,xref='paper',yref='paper',showarrow=False,
+                text=f"*Source: {source};", font=dict(size=12))
         ]
     )
         
     graph = {
             'data':data,
             'layout':layout
+        }
+    graphs=[graph]
+    ids = ["graph-{}".format(i) for i, _ in enumerate(graphs)]
+    graphJSON = json.dumps(graphs, cls=plotly.utils.PlotlyJSONEncoder)
+    return ids, graphJSON
+
+def graph_timeline(corr_df):
+    _font = dict(family='Raleway, Bold')
+    source='Binance'
+    axis_dict = dict(ticks='outside',tickfont=_font,\
+                    tickcolor='#53585f',ticklen=0, tickwidth=2, automargin=True, fixedrange=True, tickprefix="        ")
+    
+    unique_coins = corr_df.columns
+    coin_set = set(unique_coins)
+    num_buttons=np.arange(1,len(unique_coins),1).sum()
+    data, buttons=[], []
+    x=0
+    
+    if('USDT' in corr_df.columns[0]):
+        label_tag = '-USDT'
+    else: label_tag = '-USD'
+    
+    for i in unique_coins:
+        labels=[]
+
+        info_=i.replace(label_tag,'')
+        #z:vals, x:dates, y:coin names
+        cross_section = corr_df.xs(i, level=1).drop(i,axis=1)
+        labels = [x.replace(label_tag,'') for x in cross_section.columns]
+        data.append(go.Heatmap(z=cross_section.T.values, \
+                               x=cross_section.index, y=labels,
+                               name=info_, visible=False,colorscale=custom_scale))
+        buttons.append(dict(label = info_,method = 'update',\
+                            args = [{'visible':list(np.insert([False]*num_buttons, x, True))},
+                         {'yaxis': dict(axis_dict, title=f'{info_} 6-Month Rolling Return Correlation')}]))
+        x+=1
+                
+    data[0].visible=True
+    start_title = buttons[0]['label']
+    updatemenus = list([
+    dict(type="dropdown",
+         active=0,
+         y=1.2, x=0,
+         buttons=buttons,
+        )
+    ])
+
+    layout = dict(
+        font=_font,
+        images=[dict(
+            source="/static/main-logo-black_small.png",
+            xref="paper", yref="paper",
+            x=1.08, y=1.1,
+            sizex=0.25, sizey=0.25,
+            xanchor="right", yanchor="bottom")],
+        height=700, width=800,\
+        dragmode='zoom',
+        annotations=[
+            dict(x=-.1,y=-0.18,xref='paper',yref='paper',showarrow=False,
+                text=f'*Source: {source}', font=dict(size=9))
+        ],
+        title=dict(text='Crypto-Return Correlation',font=dict(_font,size=20, color='#000')),
+        xaxis=dict(
+            title='Date', ticks='inside', ticklen=6, tickwidth=2,
+            tickfont=_font,
+            rangeselector=dict(
+                buttons=list([
+                    dict(count=6,
+                         label='6m',
+                         step='month',
+                         stepmode='backward'),
+                    dict(count=1,
+                        label='YTD',
+                        step='year',
+                        stepmode='todate'),
+                    dict(count=1,
+                        label='1y',
+                        step='year',
+                        stepmode='backward'),
+                    dict(step='all')
+                ])
+            ),
+            automargin=True,
+            autorange=True,
+            type='date',
+            tickcolor='#53585f'
+        ),
+        yaxis = dict(axis_dict,title=f"{start_title} 6-Month Rolling Return Correlation"),
+        margin=dict(pad=10),
+        legend=dict(orientation="h"),
+        updatemenus=updatemenus)
+    graph = {
+        'data':data,
+        'layout':layout
         }
     graphs=[graph]
     ids = ["graph-{}".format(i) for i, _ in enumerate(graphs)]
@@ -190,17 +285,17 @@ def graph_heatmap(df, date):
     layout = go.Layout(images=[dict(
             source="/static/main-logo-black_small.png",
             xref="paper", yref="paper",
-            x=1.15, y=1.1,
-            sizex=0.32, sizey=0.32,
+            x=1.12, y=1.08,
+            sizex=0.25, sizey=0.25,
             xanchor="right", yanchor="bottom")],
         title=f'Return Correlation - Close {date}',
         annotations=[
         dict(x=.5,y=-.18,xref='paper',yref='paper',showarrow=False,
-            text=f'*6-Month Rolling Correlation of Daily Returns; Source: Binance', font=dict(size=10))
+            text=(f"*6-Month Rolling Correlation of Daily Returns; Source: Binance;"), font=dict(size=10))
         ],
         autosize=False,
-        width=600,
-        height=600,
+        width=700,
+        height=700,
         xaxis=dict(ticklen=1, tickcolor='#fff'),
         yaxis=dict(ticklen=1, tickcolor='#fff'),
         margin=dict(pad=0),
@@ -217,3 +312,40 @@ def graph_heatmap(df, date):
     ids = ["graph-{}".format(i) for i, _ in enumerate(graphs)]
     graphJSON = json.dumps(graphs, cls=plotly.utils.PlotlyJSONEncoder)
     return ids, graphJSON
+
+custom_scale = [
+        # Let first 10% (0.1) of the values have color rgb(0, 0, 0)
+        [0, '#ebcd86'],
+        [0.1, '#ebcd86'],
+
+        # Let values between 10-20% of the min and max of z
+        # have color rgb(20, 20, 20)
+        [0.1, '#d6bd82'],
+        [0.2, '#d6bd82'],
+
+        # Values between 20-30% of the min and max of z
+        # have color rgb(40, 40, 40)
+        [0.2, '#c3ad7d'],
+        [0.3, '#c3ad7d'],
+
+        [0.3, '#af9e79'],
+        [0.4, '#af9e79'],
+
+        [0.4, '#9b8e74'],
+        [0.5, '#9b8e74'],
+
+        [0.5, '#877f6f'],
+        [0.6, '#877f6f'],
+
+        [0.6, '#73716a'],
+        [0.7, '#73716a'],
+
+        [0.7, '#606265'],
+        [0.8, '#606265'],
+
+        [0.8, '#4c5560'],
+        [0.9, '#4c5560'],
+
+        [0.9, '#37475b'],
+        [1.0, '#37475b']
+    ]

@@ -4,14 +4,14 @@
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=1024">
-        <title>Blockforce Labs - Volatility</title>
+        <title>Blockforce Labs - Correlation Heat Map</title>
         <link type="text/css" href="{{ url_for('static',filename='styles/plotly.css') }}" rel="stylesheet">
         <script src="https://cdn.plot.ly/plotly-latest.js" charset="utf-8"></script>
 </head>
 <body>      
     <article>
         {% block content %}
-            <h2 class="section-heading centered white">Cryptocurrency Volatility</h2>
+            <h2 class="section-heading centered white">Crypto Heat Map Correlation Timeline</h2>
         {% endblock %}
 
         {% for id in ids %}
@@ -19,27 +19,25 @@
         {% endfor %}
     </article>
     <footer>
-        Disclaimer: Volatility data are for illustrative purposes only and do not represent an actual fund or portfolio performance.
+        Disclaimer: Crypto Correlation Heatmap are for illustrative purposes only and do not represent an actual fund or portfolio performance.
         The information herein is not intended to predict actual results, which may differ substantially from those reflected.
-        Investing involves risks, including possible loss of principal. 
-        Volatility data quoted here represents past performance. Past performance is not necessarily indicative of future results.
+        Investing involves risks, including possible loss of principal.
+        Correlation data quoted here represents past performance. Past performance is not necessarily indicative of future results.
     </footer>
-
 </body>
 
 <script type="text/javascript">
     const graphs = {{graphJSON | safe}};
     const ids = {{ids | safe}};
-    console.log(ids)
-    var config={'showAxisDragHandles': false, 'toImageButtonOptions': {'format': 'png',
-    'filename': 'blockforcecapital_volatility', 'height': 800,'width': 1200,'scale': 1}, 'showLink':false,
+
+    var config_heatmap={'showAxisDragHandles': false, 'toImageButtonOptions': {'format': 'png',
+    'filename': 'blockforcecapital_crypto_correlation', 'height': 700,'width': 700,'scale': 1}, 'showLink':false,
     'modeBarButtonsToRemove':['sendDataToCloud','zoomIn2d', 'zoomOut2d','zoom2d','pan2d','select2d',
-                                      'lasso2d','zoom3d','pan3d','orbitRotation','tableRotation'],
+          'lasso2d','autoScale2d','zoom3d','pan3d','orbitRotation','tableRotation', 'hoverClosestCartesian',
+          'hoverCompareCartesian', 'toggleSpikelines'],
         displaylogo:false}
     for(let i in graphs){
-        Plotly.plot(ids[i], graphs[i].data, graphs[i].layout, config);
+        Plotly.plot(ids[i], graphs[i].data, graphs[i].layout, config_heatmap);
     }
 </script>
 </html>
-
-
