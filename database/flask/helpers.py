@@ -193,7 +193,7 @@ def graph_heatmap(df, date):
             x=1.15, y=1.1,
             sizex=0.32, sizey=0.32,
             xanchor="right", yanchor="bottom")],
-        title=f'Return Correlation - {date}',
+        title=f'Return Correlation - Close {date}',
         annotations=[
         dict(x=.5,y=-.18,xref='paper',yref='paper',showarrow=False,
             text=f'*6-Month Rolling Correlation of Daily Returns; Source: Binance', font=dict(size=10))
@@ -217,4 +217,3 @@ def graph_heatmap(df, date):
     ids = ["graph-{}".format(i) for i, _ in enumerate(graphs)]
     graphJSON = json.dumps(graphs, cls=plotly.utils.PlotlyJSONEncoder)
     return ids, graphJSON
-

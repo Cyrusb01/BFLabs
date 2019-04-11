@@ -43,11 +43,12 @@ ids_volatility = None
 graphJSON_volatility = None
 
 def update_heatmap(d):
+    #define vars as in global namespace
     global corr_df
-    global LAST_UPDATE_HEATMAP
     global ids_heatmap
     global graphJSON_heatmap
-    
+    global LAST_UPDATE_HEATMAP
+ 
     corr_df = create_corr(pairs, db, coindata_day)
 
     # since we're using UTF time, we'll need to use
@@ -59,7 +60,6 @@ def update_heatmap(d):
     ids, graphJSON = graph_heatmap(corr_df, xd.strftime('%Y-%m-%d'))
     ids_heatmap = ids
     graphJSON_heatmap = graphJSON
-
     LAST_UPDATE_HEATMAP = d #update last update
 
 def update_volatility(d):
@@ -96,7 +96,9 @@ def heatmap():
     if(LAST_UPDATE_HEATMAP < today):
         update_heatmap(today)
 
+
     return render_template('heatmap.html', ids=ids_heatmap, graphJSON=graphJSON_heatmap)
+	
 
 @app.route('/api/v1/load_daily',methods=['GET'])
 def load_daily():
