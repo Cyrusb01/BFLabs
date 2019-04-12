@@ -18,13 +18,6 @@
             <section class="center" id="{{id}}"></section>
         {% endfor %}
     </article>
-    <footer>
-        Disclaimer: Volatility data are for illustrative purposes only and do not represent an actual fund or portfolio performance.
-        The information herein is not intended to predict actual results, which may differ substantially from those reflected.
-        Investing involves risks, including possible loss of principal. 
-        Volatility data quoted here represents past performance. Past performance is not necessarily indicative of future results.
-    </footer>
-
 </body>
 
 <script type="text/javascript">
@@ -32,7 +25,7 @@
     const ids = {{ids | safe}};
     console.log(ids)
     var config={'showAxisDragHandles': false, 'toImageButtonOptions': {'format': 'png',
-    'filename': 'blockforcecapital_volatility', 'height': 800,'width': 1200,'scale': 1}, 'showLink':false,
+    'filename': 'blockforcecapital_volatility', 'height': 700,'width': 1000,'scale': 1}, 'showLink':false,
     'modeBarButtonsToRemove':['sendDataToCloud','zoomIn2d', 'zoomOut2d','zoom2d','pan2d','select2d',
                                       'lasso2d','zoom3d','pan3d','orbitRotation','tableRotation'],
         displaylogo:false}

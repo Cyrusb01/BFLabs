@@ -51,11 +51,11 @@ def volatility(price,period_value, data_interval):
     volatility = standard_deviation*((trading_periods*365)**0.5)
     return volatility
 
-def graph_volatility(df, coins):
+def graph_volatility(df, coins, xd):
     source='Binance'
     yaxis_dict = dict(title='Rolling 30-Day Volatility', hoverformat = '.2f',\
                     ticks='outside', tickcolor='#53585f',ticklen=8, tickwidth=3,\
-                    automargin=False, tick0=0, tickprefix="          ")
+                    tick0=0, tickprefix="                 ")
     vols = [14,30,90]
     
     data=[]
@@ -96,7 +96,7 @@ def graph_volatility(df, coins):
             x=1.05, y=1.05,
             sizex=0.21, sizey=0.21,
             xanchor="right", yanchor="bottom")],
-        height=600, width=1000,\
+        height=700, width=1000,\
         dragmode='zoom',
         xaxis=dict(
             title='Date', ticks='inside', ticklen=6, tickwidth=3,
@@ -121,13 +121,12 @@ def graph_volatility(df, coins):
             tickcolor='#53585f'
         ),
         yaxis = yaxis_dict,
-        automargin=True,
-        margin=dict(pad=0),
+        margin=dict(pad=0, b=125),
         updatemenus=updatemenus,
         font=dict(size=14),
         annotations=[
-            dict(x=-.15,y=-.15,xref='paper',yref='paper',showarrow=False,
-                text=f"*Source: {source};", font=dict(size=12))
+            dict(x=-.18,y=-.25,xref='paper',yref='paper',showarrow=False,
+                text=f"*Source: {source}; Volatility data quoted here represents data as of {xd}.", font=dict(size=10))
         ]
     )
         
@@ -140,7 +139,7 @@ def graph_volatility(df, coins):
     graphJSON = json.dumps(graphs, cls=plotly.utils.PlotlyJSONEncoder)
     return ids, graphJSON
 
-def graph_timeline(corr_df):
+def graph_timeline(corr_df, xd):
     _font = dict(family='Raleway, Bold')
     source='Binance'
     axis_dict = dict(ticks='outside',tickfont=_font,\
@@ -192,8 +191,8 @@ def graph_timeline(corr_df):
         height=700, width=800,\
         dragmode='zoom',
         annotations=[
-            dict(x=-.1,y=-0.18,xref='paper',yref='paper',showarrow=False,
-                text=f'*Source: {source}', font=dict(size=9))
+            dict(x=-.15,y=-0.25,xref='paper',yref='paper',showarrow=False,
+                text=f'*Source: {source}; Correlation data quoted here represents data as of {xd}.', font=dict(size=9))
         ],
         title=dict(text='Crypto-Return Correlation',font=dict(_font,size=20, color='#000')),
         xaxis=dict(
@@ -216,13 +215,12 @@ def graph_timeline(corr_df):
                     dict(step='all')
                 ])
             ),
-            automargin=True,
             autorange=True,
             type='date',
             tickcolor='#53585f'
         ),
         yaxis = dict(axis_dict,title=f"{start_title} 6-Month Rolling Return Correlation"),
-        margin=dict(pad=10),
+        margin=dict(pad=5, b=125),
         legend=dict(orientation="h"),
         updatemenus=updatemenus)
     graph = {
@@ -290,15 +288,15 @@ def graph_heatmap(df, date):
             xanchor="right", yanchor="bottom")],
         title=f'Return Correlation - Close {date}',
         annotations=[
-        dict(x=.5,y=-.18,xref='paper',yref='paper',showarrow=False,
-            text=(f"*6-Month Rolling Correlation of Daily Returns; Source: Binance;"), font=dict(size=10))
+        dict(x=.5,y=-.25,xref='paper',yref='paper',showarrow=False,
+            text=(f"*6-Month Rolling Correlation of Daily Returns; Source: Binance; Correlation data quoted here represents data as of {date}."), font=dict(size=10))
         ],
         autosize=False,
         width=700,
         height=700,
         xaxis=dict(ticklen=1, tickcolor='#fff'),
         yaxis=dict(ticklen=1, tickcolor='#fff'),
-        margin=dict(pad=0),
+        margin=dict(pad=0, b=125)
     )
 
     #create visuals
