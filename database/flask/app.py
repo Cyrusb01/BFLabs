@@ -63,7 +63,7 @@ def update_heatmap(d):
     ids_heatmap = ids
     graphJSON_heatmap = graphJSON
 
-    ids, graphJSON = graph_timeline(corr_df)
+    ids, graphJSON = graph_timeline(corr_df, xd.strftime('%Y-%m-%d'))
     ids_timeline = ids
     graphJSON_timeline = graphJSON
 
@@ -81,7 +81,7 @@ def update_volatility(d):
     # the close of the previous day.
     xd = d - datetime.timedelta(days=1)
     
-    ids, graphJSON = graph_volatility(df, pairs)
+    ids, graphJSON = graph_volatility(df, pairs, xd.strftime('%Y-%m-%d'))
     ids_volatility = ids
     graphJSON_volatility = graphJSON
     LAST_UPDATE_VOLATILITY = d #update last update
