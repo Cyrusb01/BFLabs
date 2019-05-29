@@ -12,12 +12,13 @@ Data for the tools is updated once daily, and calculations are done on update
 
 Current tools:
 
-* [heatmap](https://blockforcelabs.com/api/heatmap) Today's 90-day return correlation
-    * ![Example Heatmap](docs/heatmap_example.img)
-* [heatmap timeline](https://blockforcelabs.com/api/heatmap_timeline) Historical 90-day return correlation
-    * ![Example Heatmap Timeline](docs/heatmap_timeline_example.img)
-* [volatility](https://blockforcelabs.com/api/volatility) Historical volatility of crypto-currency returns
-    * ![Example Volatility Chart](docs/volatility_example.img)
+* [Heatmap: ](https://blockforcelabs.com/api/heatmap) Today's 90-day return correlation
+    * ![Example Heatmap](docs/heatmap_example.png)
+* [Heatmap Timeline: ](https://blockforcelabs.com/api/heatmap_timeline) Historical 90-day return correlation
+    * ![Example Heatmap Timeline](docs/heatmap_timeline_example.png)
+* [Volatility Chart: ](https://blockforcelabs.com/api/volatility) Historical volatility of crypto-currency returns
+    * ![Example Volatility Chart](docs/volatility_example.png)
+
 ## API
 Fields returned by API:
 * `n_trades`
@@ -58,3 +59,4 @@ Where `<symbolpair>` is a Binance symbol pair in:
     ├── backtest/
     |     └── ...        # testing data api, and psql database
     └── ...
+
