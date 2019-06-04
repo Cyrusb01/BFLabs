@@ -1,42 +1,45 @@
-.plot-container > .svg-container{
-    margin: 0 auto !important;
-    position: relative !important;
-}
-
 body{
     background-color: #000000;
     font-family: 'Open Sans', sans-serif;
-    color: #6a859c;
+    color: #fff;
     font-size: 16px;
     line-height: 20px;
 }
 
-.section-heading.centered.white {
+h2{
     margin-top: 2rem;
-    margin-bottom: 4rem;
+    margin-bottom: 2rem;
     padding-top: 0px;
     color: #f0f0f0;
     font-weight: 400;
     text-align: center;
+    text-transform: uppercase;
 }
 
-.section-heading.centered {
-    font-size: 30px;
-    font-weight: 400;
-    text-align: center;
-    letter-spacing: 5px;
-    text-transform: uppercase;
+.center{
+    text-align:center;
+}
+
+h3{
+    padding-top:3rem;
+}
+
+
+img{
+    background-color:#fff;
+    border-radius:1rem;
+    border:3rem;
+    padding:1rem;
 }
 
 ul{
     list-style:none;
     margin:0;
-    padding:3rem;
+    padding:1rem;
 }
 
 li{
     padding:0.5rem;
-    display:inline;
 }
 
 a{
@@ -47,3 +50,4 @@ a{
     text-transform: uppercase;
 
 }
+
