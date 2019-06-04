@@ -153,7 +153,8 @@ def load_daily():
                'volume' ]].to_dict(orient='list')
     
     return jsonify(res)
-'''
+
+
 #for local dev
 if __name__ == "__main__":
     app.run(debug=True,host='0.0.0.0')
@@ -163,3 +164,4 @@ if __name__ == "__main__":
     gunicorn_logger = logging.getLogger('gunicorn.error')
     app.logger.handlers = gunicorn_logger.handlers
     app.run(debug=False,host='127.0.0.1',port='5005')
+'''
