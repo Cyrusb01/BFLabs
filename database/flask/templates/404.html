@@ -10,17 +10,10 @@
 <body class="center">
     <h2> Whoops! </h2>
     <p> Couldn't find the page you're looking for </p>
+    <h3>Were you looking for our tools? Check them out!</h3>
+    <img src="{{ url_for('static',filename='main-logo-black_small.png') }}" alt='Blockforce Capital Logo'>
 
-    <footer>
-        <h3>Were you looking for our tools? Check them out!</h3>
-        <img src="{{ url_for('static',filename='main-logo-black_small.png') }}" alt='Blockforce Capital Logo'>
-        <ul>
-            <li><a href='https://www.blockforcelabs.com/api/heatmap'>Heatmap</a></li>
-            <li><a href='https://www.blockforcelabs.com/api/heatmap_timeline'>Heatmap Timeline</a></li>
-            <li><a href='https://www.blockforcelabs.com/api/volatility'>Volatility Chart</a></li>
-        </ul>
-    </footer>
-
+    {% include 'footer.html' %}
 </body>
 </html>
 

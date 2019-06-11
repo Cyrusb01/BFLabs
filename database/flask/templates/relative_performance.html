@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en">
+<head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=1024">
+        <title>Blockforce Labs - Relative Performance</title>
+        <link type="text/css" href="{{ url_for('static',filename='styles/plotly.css') }}" rel="stylesheet">
+        <style>
+        #container{
+            margin-left:auto;
+            margin-right:auto;
+        }
+        </style>
+        <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+        <script src="../static/highstock/js/highstock.js"></script>
+        <script src="../static/highstock/js/modules/exporting.js"></script>
+</head>
+<body>      
+    <article>
+            <h2 class="section-heading centered white">Relative Performance</h2>
+            <section id="container" style="height: 30rem; width: 50%; background-color:#fff;"></section>
+    </article>
+    {% include 'footer.html' %}
+</body>
+<script type="text/javascript">
+        var seriesOptions = [],
+            seriesCounter = 0
+            colors =['#e6194B', '#3cb44b', '#ffe119', '#4363d8', '#f58231', '#42d4f4', '#f032e6', '#fabebe',
+                     '#469990', '#e6beff', '#9A6324', '#800000', '#aaffc3', '#000075', '#a9a9a9', '#000000']
+        const pairs= {{pairs | safe}};
+        const data = {{prices | safe}};
+        const timestamps = {{timestamps | safe }};
+
+        //create 2d array for each coin
+        for (var i=0; i<pairs.length; i++){
+            let name = pairs[i]
+            let price = data[name]
+            let xdata = timestamps[name].map(function(item, i){
+                    return [item, price[i]];
+                });
+            seriesOptions[i] = {
+                name: name.slice(0,-5).toUpperCase(),
+                data: xdata,
+                color:colors[i]
+            };
+            seriesCounter += 1;
+            //if we get through all names
+            if (seriesCounter === pairs.length) {
+                console.log('last iteration')
+                console.log(seriesCounter)
+                createChart();
+            }
+        }
+
+    function createChart(){
+       //Highcharts.stockChart('container',{
+        $('#container').highcharts('StockChart', {
+            scrollbar: {enabled: false},
+
+            chart: {
+                backgroundColor: null,
+                plotBackgroundColor: null,
+               // height:'100%',
+               // width:'100%',
+                zoomType: 'x'
+            },
+            navigator: {enabled: false},
+            rangeSelector: {
+                selected: 5,
+                buttons: [{
+                    type: 'ytd',
+                    text: 'YTD'
+                }, {
+                    type: 'year',
+                    count: 1,
+                    text: '1Y'
+                }, {
+                    type: 'month',
+                    count: 6,
+                    text: '6M'
+                }, {
+                    type: 'all',
+                    text: 'Reset'
+                }]
+            },
+            credits: {enabled: false},
+            exporting: {enabled: false},
+
+            title: {
+                text: 'Relative Returns - Cryptocurrencies',
+                style: {
+                    fontSize: '1rem',
+                }
+            },
+            subtitle: {
+                text: 'Source: Binance',
+                style:{
+                    fontSize: '0.8rem'
+                }
+            },
+
+            plotOptions: {
+                series: {
+                    compare: 'percent'
+                }
+            },
+            yAxis: [{
+                offset: 45,
+                labels: {
+                    formatter: function() {
+                        return (this.value > 0 ? '+' : '') + this.value + '%';
+                    }
+                }
+            }],
+
+            legend: {
+                enabled: true,
+                backgroundColor: '#fff',
+                borderColor: 'none',
+                layout: 'vertical',
+                verticalAlign: 'middle',
+                borderWidth: 1,
+                shadow: false,
+                itemStyle:{'fontWeight':'normal'},
+                align:'left'
+            },
+
+            tooltip: {
+                pointFormat: '<span style="color:{series.color}; font-weight:bold">{series.name}:</span> {point.change}%<br/>',
+                valueDecimals: 2
+            },
+
+            series: seriesOptions
+        });
+    }  
+</script>
+
+</html>
+

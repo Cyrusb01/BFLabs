@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import sys
 import pandas as pd
+import numpy as np
 import json
 from flask import Flask,jsonify,request,Response,render_template
 from flask_sqlalchemy import SQLAlchemy
@@ -31,9 +32,11 @@ db.Model.prepare(db.engine,reflect=True)
 coindata_day = db.Model.classes.coindata_day
 
 pairs = ['BTC-USDT', 'BCHABC-USDT', 'TRX-USDT', 'IOTA-USDT', 'XLM-USDT', 'EOS-USDT','XRP-USDT', 'ADA-USDT','LTC-USDT', 'NEO-USDT', 'BNB-USDT', 'ETH-USDT']
-
+price_data={}
+timestamp_data={}
 LAST_UPDATE_HEATMAP = datetime.datetime(2019,1,1).date()
 LAST_UPDATE_VOLATILITY = datetime.datetime(2019,1,1).date()
+LAST_UPDATE_REL_PERF = datetime.datetime(2019,1,1).date()
 
 ids_heatmap = None
 graphJSON_heatmap= None
@@ -43,6 +46,19 @@ corr_df = None
 
 ids_volatility = None
 graphJSON_volatility = None
+
+def update_df(d):
+    #update df 
+    global price_data
+    global timestamp_data
+    global LAST_UPDATE_REL_PERF
+
+    for sp in pairs:    
+        x = get_coin_data(sp, db, coindata_day)
+        price_data[sp] = x['price_close']
+        timestamp_data[sp] = [ts*1000.0 for ts in x['timestamp']]
+
+    LAST_UPDATE_REL_PERF = d
 
 def update_heatmap(d):
     #define vars as in global namespace
@@ -100,6 +116,16 @@ def vol():
 
     return render_template('volatility.html', ids=ids_volatility, graphJSON=graphJSON_volatility)
 
+@app.route('/relative_performance')
+def rel_perf():
+    today = datetime.datetime.now(tz=pytz.utc).date()
+
+    if(LAST_UPDATE_REL_PERF < today):
+        update_df(today)
+    
+    return render_template('relative_performance.html', 
+                            pairs=pairs, prices=json.dumps(price_data),
+                            timestamps = json.dumps(timestamp_data))
 
 @app.route('/heatmap_timeline')
 def heatmap_timeline():
@@ -157,11 +183,10 @@ def load_daily():
 
 #for local dev
 if __name__ == "__main__":
-    app.run(debug=True,host='0.0.0.0')
+    print('dev server')
+    app.run(debug=True,host='0.0.0.0', port=8001)
 
-'''    
-if __name__ == "__main__":
-    gunicorn_logger = logging.getLogger('gunicorn.error')
-    app.logger.handlers = gunicorn_logger.handlers
-    app.run(debug=False,host='127.0.0.1',port='5005')
-'''
+#if __name__ == "__main__":
+#    gunicorn_logger = logging.getLogger('gunicorn.error')
+#    app.logger.handlers = gunicorn_logger.handlers
+#    app.run(debug=False,host='127.0.0.1',port='5005')
