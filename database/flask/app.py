@@ -3,7 +3,7 @@ import sys
 import pandas as pd
 import numpy as np
 import json
-from flask import Flask,jsonify,request,Response,render_template
+from flask import Flask,jsonify,request,Response,render_template,redirect
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import create_engine, func, and_, or_
 from sqlalchemy.ext.automap import automap_base
@@ -16,6 +16,7 @@ from variables import IMG, RANGE, ANNOT, PLOT_CONFIG, XAXIS, YAXIS, COLORSCALE
 import datetime
 import pytz
 import config as cf
+import shutil
 
 cstr = f"postgresql://{cf.psql_user}:{cf.psql_pass}@"\
        f"{cf.psql_host}/{cf.dbname}"
@@ -116,16 +117,26 @@ def vol():
 
     return render_template('volatility.html', ids=ids_volatility, graphJSON=graphJSON_volatility)
 
-@app.route('/relative_performance')
-def rel_perf():
+@app.route('/cumulative_returns')
+def cum_perf():
     today = datetime.datetime.now(tz=pytz.utc).date()
 
     if(LAST_UPDATE_REL_PERF < today):
         update_df(today)
-    
-    return render_template('relative_performance.html', 
+    year = today.year
+    month = today.month
+    day = today.day
+    quarters={1:1,2:1,3:1,
+              4:4,5:4,6:4,
+              7:7,8:7,9:7,
+              10:10,11:10,12:10}
+
+    return render_template('relative_performance.html',
                             pairs=pairs, prices=json.dumps(price_data),
-                            timestamps = json.dumps(timestamp_data))
+                            timestamps = json.dumps(timestamp_data),
+                            year=year, month=month, day=day,
+                            quarter = quarters[month])
+    
 
 @app.route('/heatmap_timeline')
 def heatmap_timeline():
@@ -180,13 +191,16 @@ def load_daily():
     
     return jsonify(res)
 
+@app.route('/_download_GARCH',methods=['GET'])
+def _download_GARCH():
+    return redirect("/api/static/data/btc_30_minute.csv")
 
 #for local dev
-if __name__ == "__main__":
-    print('dev server')
-    app.run(debug=True,host='0.0.0.0', port=8001)
-
 #if __name__ == "__main__":
-#    gunicorn_logger = logging.getLogger('gunicorn.error')
-#    app.logger.handlers = gunicorn_logger.handlers
-#    app.run(debug=False,host='127.0.0.1',port='5005')
+#    print('dev server')
+#    app.run(debug=True,host='0.0.0.0', port=8001)
+
+if __name__ == "__main__":
+    gunicorn_logger = logging.getLogger('gunicorn.error')
+    app.logger.handlers = gunicorn_logger.handlers
+    app.run(debug=False,host='127.0.0.1',port='5005')

@@ -4,7 +4,7 @@
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=1024">
-        <title>Blockforce Labs - Relative Performance</title>
+        <title>Blockforce Labs - Cumulative Returns</title>
         <link type="text/css" href="{{ url_for('static',filename='styles/plotly.css') }}" rel="stylesheet">
         <style>
         #container{
@@ -18,7 +18,7 @@
 </head>
 <body>      
     <article>
-            <h2 class="section-heading centered white">Relative Performance</h2>
+            <h2 class="section-heading centered white">Cumulative Returns</h2>
             <section id="container" style="height: 30rem; width: 50%; background-color:#fff;"></section>
     </article>
     {% include 'footer.html' %}
@@ -31,6 +31,16 @@
         const pairs= {{pairs | safe}};
         const data = {{prices | safe}};
         const timestamps = {{timestamps | safe }};
+        const year = {{year | safe}};
+        const month= {{month | safe}};
+        const day = {{day | safe}};
+        const quarter = {{quarter | safe}};
+	var currentDate = new Date(Date.UTC(year,month-1,day,0,0,0));
+        var tempDate = new Date(currentDate.getTime());
+            tempDate.setUTCDate(1);
+            mtdCount = parseInt((currentDate.getTime() - tempDate.getTime())/(24 * 3600 * 1000));
+        tempDate.setUTCMonth(quarter-1);
+        qtdCount = parseInt((currentDate.getTime() - tempDate.getTime())/(24 * 3600 * 1000));
 
         //create 2d array for each coin
         for (var i=0; i<pairs.length; i++){
@@ -79,7 +89,15 @@
                     type: 'month',
                     count: 6,
                     text: '6M'
-                }, {
+                },{
+                    type: 'day',
+                    count:mtdCount,
+                    text: 'MTD'
+                },{
+                    type:'day',
+                    count:qtdCount,
+                    text:'QTD'
+                },{
                     type: 'all',
                     text: 'Reset'
                 }]
@@ -88,7 +106,7 @@
             exporting: {enabled: false},
 
             title: {
-                text: 'Relative Returns - Cryptocurrencies',
+                text: 'Cumulative Returns - Cryptocurrencies',
                 style: {
                     fontSize: '1rem',
                 }
