@@ -198,4 +198,7 @@ if __name__ == "__main__":
     gunicorn_logger = logging.getLogger('gunicorn.error')
     app.logger.handlers = gunicorn_logger.handlers
     app.run(debug=False,host='127.0.0.1',port='5005')
-
+#for local dev
+#if __name__ == "__main__":
+#    print('dev server')
+#    app.run(debug=True,host='0.0.0.0', port=8001)
