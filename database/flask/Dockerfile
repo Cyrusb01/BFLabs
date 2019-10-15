@@ -8,6 +8,7 @@ ADD config.py /
 ADD requirements.txt /
 ADD gunicorn.conf.py /
 ADD app.py /
+ADD dash_def.py /
 ADD helpers.py /
 ADD variables.py /
 ADD static /static
