@@ -5,6 +5,12 @@ import numpy as np
 import json
 from flask import Flask,jsonify,request,Response,render_template
 from flask_sqlalchemy import SQLAlchemy
+from flask_cors import CORS
+import dash
+from dash.dependencies import Input, Output, State
+import dash_core_components as dcc
+import dash_html_components as html
+
 from sqlalchemy import create_engine, func, and_, or_
 from sqlalchemy.ext.automap import automap_base
 from sqlalchemy.orm import Session
@@ -16,6 +22,7 @@ from variables import IMG, RANGE, ANNOT, PLOT_CONFIG, XAXIS, YAXIS, COLORSCALE
 import datetime
 import pytz
 import config as cf
+from dash_def import add_dash_yield
 
 cstr = f"postgresql://{cf.psql_user}:{cf.psql_pass}@"\
        f"{cf.psql_host}/{cf.dbname}"
@@ -30,6 +37,8 @@ db = SQLAlchemy(app)
 db.Model = automap_base()
 db.Model.prepare(db.engine,reflect=True)
 coindata_day = db.Model.classes.coindata_day
+
+dash_app = add_dash_yield(app)
 
 pairs = ['BTC-USDT', 'BCHABC-USDT', 'TRX-USDT', 'IOTA-USDT', 'XLM-USDT', 'EOS-USDT','XRP-USDT', 'ADA-USDT','LTC-USDT', 'NEO-USDT', 'BNB-USDT', 'ETH-USDT']
 price_data={}
@@ -179,7 +188,6 @@ def load_daily():
                'volume' ]].to_dict(orient='list')
     
     return jsonify(res)
-
 
 #for local dev
 if __name__ == "__main__":
