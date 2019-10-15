@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="en">
+<head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=1024">
+        <title>Blockforce Labs</title>
+        <link type="text/css" href="{{ url_for('static',filename='styles/404.css') }}" rel="stylesheet">
+</head>
+<body class="center">
+    <h2> Whoops! </h2>
+    <p> Couldn't find the page you're looking for </p>
+    <h3>Were you looking for our tools? Check them out!</h3>
+    <img src="{{ url_for('static',filename='main-logo-black_small.png') }}" alt='Blockforce Capital Logo'>
+
+    {% include 'footer.html' %}
+</body>
+</html>
+

@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 import sys
 import pandas as pd
+import numpy as np
 import json
-from flask import Flask,jsonify,request,Response,render_template
+from flask import Flask,jsonify,request,Response,render_template,redirect
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import create_engine, func, and_, or_
 from sqlalchemy.ext.automap import automap_base
@@ -15,6 +16,7 @@ from variables import IMG, RANGE, ANNOT, PLOT_CONFIG, XAXIS, YAXIS, COLORSCALE
 import datetime
 import pytz
 import config as cf
+import shutil
 
 cstr = f"postgresql://{cf.psql_user}:{cf.psql_pass}@"\
        f"{cf.psql_host}/{cf.dbname}"
@@ -31,9 +33,11 @@ db.Model.prepare(db.engine,reflect=True)
 coindata_day = db.Model.classes.coindata_day
 
 pairs = ['BTC-USDT', 'BCHABC-USDT', 'TRX-USDT', 'IOTA-USDT', 'XLM-USDT', 'EOS-USDT','XRP-USDT', 'ADA-USDT','LTC-USDT', 'NEO-USDT', 'BNB-USDT', 'ETH-USDT']
-
+price_data={}
+timestamp_data={}
 LAST_UPDATE_HEATMAP = datetime.datetime(2019,1,1).date()
 LAST_UPDATE_VOLATILITY = datetime.datetime(2019,1,1).date()
+LAST_UPDATE_REL_PERF = datetime.datetime(2019,1,1).date()
 
 ids_heatmap = None
 graphJSON_heatmap= None
@@ -43,6 +47,19 @@ corr_df = None
 
 ids_volatility = None
 graphJSON_volatility = None
+
+def update_df(d):
+    #update df 
+    global price_data
+    global timestamp_data
+    global LAST_UPDATE_REL_PERF
+
+    for sp in pairs:    
+        x = get_coin_data(sp, db, coindata_day)
+        price_data[sp] = x['price_close']
+        timestamp_data[sp] = [ts*1000.0 for ts in x['timestamp']]
+
+    LAST_UPDATE_REL_PERF = d
 
 def update_heatmap(d):
     #define vars as in global namespace
@@ -86,6 +103,11 @@ def update_volatility(d):
     graphJSON_volatility = graphJSON
     LAST_UPDATE_VOLATILITY = d #update last update
 
+@app.errorhandler(404)
+def page_not_found(e):
+    #404 status handler
+    return render_template('404.html'), 404
+
 @app.route('/volatility')
 def vol():
     today = datetime.datetime.now(tz=pytz.utc).date()
@@ -95,6 +117,26 @@ def vol():
 
     return render_template('volatility.html', ids=ids_volatility, graphJSON=graphJSON_volatility)
 
+@app.route('/cumulative_returns')
+def cum_perf():
+    today = datetime.datetime.now(tz=pytz.utc).date()
+
+    if(LAST_UPDATE_REL_PERF < today):
+        update_df(today)
+    year = today.year
+    month = today.month
+    day = today.day
+    quarters={1:1,2:1,3:1,
+              4:4,5:4,6:4,
+              7:7,8:7,9:7,
+              10:10,11:10,12:10}
+
+    return render_template('cumulative_returns.html',
+                            pairs=pairs, prices=json.dumps(price_data),
+                            timestamps = json.dumps(timestamp_data),
+                            year=year, month=month, day=day,
+                            quarter = quarters[month])
+    
 
 @app.route('/heatmap_timeline')
 def heatmap_timeline():
@@ -148,9 +190,17 @@ def load_daily():
                'volume' ]].to_dict(orient='list')
     
     return jsonify(res)
-    
+
+@app.route('/_download_GARCH',methods=['GET'])
+def _download_GARCH():
+    return redirect("/api/static/data/btc_30_minute.csv")
+
+#for local dev
+#if __name__ == "__main__":
+#    print('dev server')
+#    app.run(debug=True,host='0.0.0.0', port=8001)
+
 if __name__ == "__main__":
     gunicorn_logger = logging.getLogger('gunicorn.error')
     app.logger.handlers = gunicorn_logger.handlers
     app.run(debug=False,host='127.0.0.1',port='5005')
-
