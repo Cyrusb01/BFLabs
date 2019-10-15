@@ -5,6 +5,12 @@ import numpy as np
 import json
 from flask import Flask,jsonify,request,Response,render_template,redirect
 from flask_sqlalchemy import SQLAlchemy
+from flask_cors import CORS
+import dash
+from dash.dependencies import Input, Output, State
+import dash_core_components as dcc
+import dash_html_components as html
+
 from sqlalchemy import create_engine, func, and_, or_
 from sqlalchemy.ext.automap import automap_base
 from sqlalchemy.orm import Session
@@ -17,6 +23,7 @@ import datetime
 import pytz
 import config as cf
 import shutil
+from dash_def import add_dash_yield
 
 cstr = f"postgresql://{cf.psql_user}:{cf.psql_pass}@"\
        f"{cf.psql_host}/{cf.dbname}"
@@ -31,6 +38,8 @@ db = SQLAlchemy(app)
 db.Model = automap_base()
 db.Model.prepare(db.engine,reflect=True)
 coindata_day = db.Model.classes.coindata_day
+
+dash_app = add_dash_yield(app)
 
 pairs = ['BTC-USDT', 'BCHABC-USDT', 'TRX-USDT', 'IOTA-USDT', 'XLM-USDT', 'EOS-USDT','XRP-USDT', 'ADA-USDT','LTC-USDT', 'NEO-USDT', 'BNB-USDT', 'ETH-USDT']
 price_data={}
@@ -123,20 +132,10 @@ def cum_perf():
 
     if(LAST_UPDATE_REL_PERF < today):
         update_df(today)
-    year = today.year
-    month = today.month
-    day = today.day
-    quarters={1:1,2:1,3:1,
-              4:4,5:4,6:4,
-              7:7,8:7,9:7,
-              10:10,11:10,12:10}
-
-    return render_template('cumulative_returns.html',
-                            pairs=pairs, prices=json.dumps(price_data),
-                            timestamps = json.dumps(timestamp_data),
-                            year=year, month=month, day=day,
-                            quarter = quarters[month])
     
+    return render_template('cumulative_performance.html', 
+                            pairs=pairs, prices=json.dumps(price_data),
+                            timestamps = json.dumps(timestamp_data))
 
 @app.route('/heatmap_timeline')
 def heatmap_timeline():
@@ -195,12 +194,8 @@ def load_daily():
 def _download_GARCH():
     return redirect("/api/static/data/btc_30_minute.csv")
 
-#for local dev
-#if __name__ == "__main__":
-#    print('dev server')
-#    app.run(debug=True,host='0.0.0.0', port=8001)
-
 if __name__ == "__main__":
     gunicorn_logger = logging.getLogger('gunicorn.error')
     app.logger.handlers = gunicorn_logger.handlers
     app.run(debug=False,host='127.0.0.1',port='5005')
+
