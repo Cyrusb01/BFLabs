@@ -12,6 +12,7 @@ ADD dash_def.py /
 ADD helpers.py /
 ADD variables.py /
 ADD static /static
+ADD assets /assets
 ADD templates /templates
 RUN pip3 install -r requirements.txt
 
