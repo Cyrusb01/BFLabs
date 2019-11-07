@@ -8,7 +8,7 @@ import pandas as pd
 last_back = 0
 last_next = 0
 
-df = pd.read_csv("static/data/divswap_curve3.csv")
+df = pd.read_csv("static/data/divswap_implied_cum_growth_curve.csv")
 
 xlist = list(df["x"].dropna())
 ylist = list(df["y"].dropna())
@@ -55,23 +55,30 @@ EYES = {
 
 TEXTS = {
     0: '''
-    #### Dividend swap curve 101
-    The yield curve shows how much it costs the federal government to borrow
-    money for a given amount of time, revealing the relationship between long-
-    and short-term interest rates.
+    #### Dividend swap growth curve 101
+    The Dividend Swap growth curve shows the implied growth of forward dividend derivatives, revealing the relationship between long-
+    and short-term expectations for growth in dividends per share of the S&P 500.
     >>
-    It is, inherently, a forecast for what the economy holds in the future —
+    It is, inherently, a market forecast for what dividends will do in the future —
     how much inflation there will be, for example, and how healthy growth will
-    be over the years ahead — all embodied in the price of money today,
-    tomorrow and many years from now.
+    be over the years ahead — all embodied price of dividend derivatives today,
+    tomorrow and many years from now. This isn't exactly the whole story, as many
+    dealers and market participants are naturally long dividends and use the 
+    dividend market as a way to reduce their exposure.  This can at times present
+    opportunities for those looking to participate in the purely in the growth of 
+    dividends over time without the inherent risk that stocks may be over valued.
     '''.replace('  ', ''),
     1: '''
     #### Where we stand
-    On Wednesday, both short-term and long-term rates were lower than they have
-    been for most of history – a reflection of the continuing hangover
-    from the financial crisis.
+    Recently, the dividend market is pricing little to no dividend
+    growth over the next 10 years.  This has only happened a few times in 
+    recent history.  One might argue that it has more to do with fears of 
+    a recession on the horizon. While there have been many recessions,
+    historically, the S&P dividends are farily resilient having only 
+    declined three calendar years over the past 45 years, so investors
+    should pay attention.  This could be an attractive entry point.
     >>
-    The yield curve is fairly flat, which is a sign that investors expect
+    The dividend curve today is fairly flat, which is a sign that investors expect
     mediocre growth in the years ahead.
     '''.replace('  ', ''),
     2: '''
@@ -115,10 +122,10 @@ TEXTS = {
 ANNOTATIONS = {
     0: [],
     1: [dict(
-        showarrow=False,
-        x="0-yr",
+        showarrow=True,
+        x="3-yr",
         y='2019-10-07',
-        z=58.1,
+        z=0.006745,
         text="The dividend swap curve is priced in <br> very little growth <br>.",
         xref='x',
         yref='y',
@@ -147,7 +154,11 @@ def add_dash_yield(server, path_name = '/yieldapp/'):
     # create dash app
     dash_app = Dash(__name__,
             server=server,
-            routes_pathname_prefix=path_name)
+            routes_pathname_prefix=path_name,
+            requests_pathname_prefix='/api'+path_name
+          )
+
+    print(dash_app.config)
 
     # create dash app layout (must do before creating callbacks)
     dash_app.layout = html.Div([
@@ -252,8 +263,8 @@ def add_dash_yield(server, path_name = '/yieldapp/'):
                     "roughness": 0.01,
                     "specular": 0.01,
                 },
-                colorscale=[[0, "rgb(230,245,254)"], [0.4, "rgb(123,171,203)"], [
-                    0.8, "rgb(40,119,174)"], [1, "rgb(37,61,81)"]],
+                colorscale=[[0, "rgb(157,191,242)"], [0.4, "rgb(119, 172, 252)"], [
+                    0.8, "rgb(61, 137, 252)"], [1, "rgb(8, 106, 255)"]],
                 opacity=opacity,
                 showscale=False,
                 zmax=9.18,
@@ -280,8 +291,8 @@ def add_dash_yield(server, path_name = '/yieldapp/'):
                 x=ylist,
                 y=xlist,
                 z=np.array(zlist).T,
-                colorscale=[[0, "rgb(230,245,254)"], [0.4, "rgb(123,171,203)"], [
-                    0.8, "rgb(40,119,174)"], [1, "rgb(37,61,81)"]],
+                colorscale=[[0, "rgb(157,191,242)"], [0.4, "rgb(119, 172, 252)"], [
+                    0.8, "rgb(61, 137, 252)"], [1, "rgb(8, 106, 255)"]],
                 showscale=False,
                 zmax=9.18,
                 zmin=0,
