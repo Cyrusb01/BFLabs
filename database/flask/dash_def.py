@@ -155,10 +155,8 @@ def add_dash_yield(server, path_name = '/yieldapp/'):
     dash_app = Dash(__name__,
             server=server,
             routes_pathname_prefix=path_name,
-            requests_pathname_prefix='/api'+path_name
+            requests_pathname_prefix='/api'+path_name # this is needed for deployment on bflabs
           )
-
-    print(dash_app.config)
 
     # create dash app layout (must do before creating callbacks)
     dash_app.layout = html.Div([
