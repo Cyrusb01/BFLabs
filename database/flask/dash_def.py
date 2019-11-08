@@ -3,6 +3,8 @@ import dash_html_components as html
 import dash_core_components as dcc
 from dash.dependencies import Input, Output, State
 import pandas as pd
+import plotly.graph_objs as go
+import numpy as np
 
 # Internal logic
 last_back = 0
@@ -150,12 +152,13 @@ def add_dash_yield(server, path_name = '/yieldapp/'):
     Outputs:
         dash_app: dash server
     """
-
+    route_prefix=''#'/api'
     # create dash app
     dash_app = Dash(__name__,
             server=server,
             routes_pathname_prefix=path_name,
-            requests_pathname_prefix='/api'+path_name # this is needed for deployment on bflabs
+            requests_pathname_prefix=route_prefix+path_name 
+            # this is needed for deployment on bflabs
           )
 
     # create dash app layout (must do before creating callbacks)
@@ -217,6 +220,8 @@ def add_dash_yield(server, path_name = '/yieldapp/'):
         ),
     ])
 
+    custom_colorscl=[[0, "rgb(227, 230, 252)"], [0.25, "rgb(152, 163, 245)"], [0.75, "rgb(86, 86, 252)"], [1, "rgb(0,0,255)"]]
+
     # define callbacks to make graph interactive
     # Make 3d graph
     @dash_app.callback(Output('graph', 'figure'), [Input('slider', 'value')])
@@ -232,19 +237,19 @@ def add_dash_yield(server, path_name = '/yieldapp/'):
             x_secondary = [
                 '1-yr'] * len(z_secondary_beginning) + ['0-yr'] * len(z_secondary_end)
             y_secondary = ylist
-            opacity = 0.3
+            opacity = 0.8
 
         elif value == 1:
             x_secondary = xlist
             y_secondary = [ylist[-1] for i in xlist]
             z_secondary = zlist[-1]
-            opacity = 0.2
+            opacity = 0.8
 
         elif value == 4:
             z_secondary = [z[5] for z in zlist]
             x_secondary = ['5-yr' for i in z_secondary]
             y_secondary = ylist
-            opacity = 0.25
+            opacity = 0.8
 
         if value in range(0, 5):
 
@@ -261,13 +266,22 @@ def add_dash_yield(server, path_name = '/yieldapp/'):
                     "roughness": 0.01,
                     "specular": 0.01,
                 },
-                colorscale=[[0, "rgb(157,191,242)"], [0.4, "rgb(119, 172, 252)"], [
-                    0.8, "rgb(61, 137, 252)"], [1, "rgb(8, 106, 255)"]],
                 opacity=opacity,
                 showscale=False,
                 zmax=9.18,
                 zmin=0,
                 scene="scene",
+                cmin=-0.5,
+                cmax=1,
+                colorscale=custom_colorscl,
+                contours=go.surface.Contours(
+                        x=go.surface.contours.X(
+                            highlight=True,
+                            highlightcolor="#444444",
+                        ),
+                        y=go.surface.contours.Y(highlight=False),
+                        z=go.surface.contours.Z(highlight=False),
+                ) 
             )
 
             trace2 = dict(
@@ -276,26 +290,23 @@ def add_dash_yield(server, path_name = '/yieldapp/'):
                 x=x_secondary,
                 y=y_secondary,
                 z=z_secondary,
-                hoverinfo='x+y+z',
+                hoverinfo='x+y',
                 line=dict(color='#444444')
             )
 
             data = [trace1, trace2]
 
         else:
-
             trace1 = dict(
                 type="contour",
                 x=ylist,
                 y=xlist,
                 z=np.array(zlist).T,
-                colorscale=[[0, "rgb(157,191,242)"], [0.4, "rgb(119, 172, 252)"], [
-                    0.8, "rgb(61, 137, 252)"], [1, "rgb(8, 106, 255)"]],
+                colorscale=custom_colorscl,
                 showscale=False,
                 zmax=9.18,
                 zmin=0,
-                line=dict(smoothing=1, color='rgba(40,40,40,0.15)'),
-                contours=dict(coloring='heatmap')
+                line=dict(smoothing=1, color='rgba(40,40,40,0.8)'),
             )
 
             data = [trace1]
@@ -330,12 +341,15 @@ def add_dash_yield(server, path_name = '/yieldapp/'):
                     "categoryorder": 'array',
                     "categoryarray": list(reversed(xlist))
                 },
-                yaxis={
-                    "showgrid": True,
-                    "title": "",
-                    "type": "date",
-                    "zeroline": False,
-                },
+                yaxis=dict(
+                    showgrid= True,
+                    title="",
+                    type="date",
+                    zeroline= False,
+                    showspikes=False,
+                ),
+                zaxis = dict(showspikes=False, 
+                                              spikesides=False),
             )
         )
 
