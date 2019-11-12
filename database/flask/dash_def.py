@@ -25,21 +25,13 @@ for row in df.iterrows():
 
 UPS = {
     0: dict(x=0, y=0, z=1),
-    1: dict(x=0, y=0, z=1),
-    2: dict(x=0, y=0, z=1),
-    3: dict(x=0, y=0, z=1),
-    4: dict(x=0, y=0, z=1),
-    5: dict(x=0, y=0, z=1),
+    1: dict(x=0, y=0, z=1)
 }
 
 # CENTERS: the center of the graph when you rotate.
 CENTERS = {
-    0: dict(x=0, y=0, z=0),
-    1: dict(x=0, y=0, z=0),
-    2: dict(x=0, y=0, z=0),
-    3: dict(x=0, y=0, z=0),
-    4: dict(x=0, y=0, z=0),
-    5: dict(x=0, y=0, z=0),
+    0: dict(x=0, y=0.5, z=-0.5),
+    1: dict(x=0, y=0, z=-1)
 }
 
 # EYES: the angle you look at the graph.
@@ -47,20 +39,16 @@ CENTERS = {
 # y: big => zoom out on y axis; small => zoom in on y axis; negative: inverse y axis
 # z: big => zoom out on z axis (look down on the graph); small => zoom in on z axis (look up to the graph); negative: inverse z axis
 EYES = {
-    0: dict(x=4, y=3, z=0.5),
-    1: dict(x=0, y=4.5, z=0),
-    2: dict(x=4, y=-2.8, z=-0.8),
-    3: dict(x=4, y=2.8, z=-0.8),
-    4: dict(x=4, y=0, z=0),
-    5: dict(x=0, y=0, z=8)
+    0: dict(x=2.5, y=1.75, z=0.3),
+    1: dict(x=0, y=4, z=0),
 }
 
 TEXTS = {
     0: '''
-    #### Dividend swap growth curve 101
+    ##### Dividend Swap Growth Curve 101
     The Dividend Swap growth curve shows the implied growth of forward dividend derivatives, revealing the relationship between long-
-    and short-term expectations for growth in dividends per share of the S&P 500.
-    >>
+    and short-term expectations for growth in dividends per share of the S&P 500. 
+    ***
     It is, inherently, a market forecast for what dividends will do in the future —
     how much inflation there will be, for example, and how healthy growth will
     be over the years ahead — all embodied price of dividend derivatives today,
@@ -71,7 +59,7 @@ TEXTS = {
     dividends over time without the inherent risk that stocks may be over valued.
     '''.replace('  ', ''),
     1: '''
-    #### Where we stand
+    ##### Where we stand
     Recently, the dividend market is pricing little to no dividend
     growth over the next 10 years.  This has only happened a few times in 
     recent history.  One might argue that it has more to do with fears of 
@@ -79,45 +67,9 @@ TEXTS = {
     historically, the S&P dividends are farily resilient having only 
     declined three calendar years over the past 45 years, so investors
     should pay attention.  This could be an attractive entry point.
-    >>
+    ***
     The dividend curve today is fairly flat, which is a sign that investors expect
     mediocre growth in the years ahead.
-    '''.replace('  ', ''),
-    2: '''
-    #### Deep in the valley
-    In response to the last recession, the Federal Reserve has kept short-term
-    rates very low — near zero — since 2008. (Lower interest rates stimulate
-    the economy, by making it cheaper for people to borrow money, but also
-    spark inflation.)
-    >>
-    Now, the Fed is getting ready to raise rates again, possibly as early as
-    June.
-    '''.replace('  ', ''),
-    3: '''
-    #### Last time, a puzzle
-    The last time the Fed started raising rates was in 2004. From 2004 to 2006,
-    short-term rates rose steadily.
-    >>
-    But long-term rates didn't rise very much.
-    >>
-    The Federal Reserve chairman called this phenomenon a “conundrum," and it
-    raised questions about the ability of the Fed to guide the economy.
-    Part of the reason long-term rates failed to rise was because of strong
-    foreign demand.
-    '''.replace('  ', ''),
-    4: '''
-    #### Long-term rates are low now, too
-    Foreign buyers have helped keep long-term rates low recently, too — as have
-    new rules encouraging banks to hold government debt and expectations that
-    economic growth could be weak for a long time.
-    >>
-    The 10-year Treasury yield was as low as it has ever been in July 2012 and
-    has risen only modestly since.
-    Some economists refer to the economic pessimism as “the new normal.”
-    '''.replace('  ', ''),
-    5: '''
-    #### Long-term rates are low now, too
-    Here is the same chart viewed from above.
     '''.replace('  ', '')
 }
 
@@ -134,11 +86,7 @@ ANNOTATIONS = {
         zref='z',
         xanchor='left',
         yanchor='auto'
-    )],
-    2: [],
-    3: [],
-    4: [],
-    5: [],
+    )]
 }
 
 def add_dash_yield(server, path_name = '/yieldapp/'):
@@ -152,7 +100,7 @@ def add_dash_yield(server, path_name = '/yieldapp/'):
     Outputs:
         dash_app: dash server
     """
-    route_prefix=''#'/api'
+    route_prefix='/api'
     # create dash app
     dash_app = Dash(__name__,
             server=server,
@@ -167,7 +115,7 @@ def add_dash_yield(server, path_name = '/yieldapp/'):
             [
                 dcc.Markdown(
                     '''
-                    ### A View of a Chart That Predicts The Economic Future: The Yield Curve
+                    #### A View of a Chart That Predicts Dividends
                     This interactive report is a rendition of a
                     [New York Times original](https://www.nytimes.com/interactive/2015/03/19/upshot/3d-yield-curve-economic-growth.html).
                     '''.replace('  ', ''),
@@ -183,7 +131,7 @@ def add_dash_yield(server, path_name = '/yieldapp/'):
                     [
                         dcc.Slider(
                             min=0,
-                            max=5,
+                            max=1,
                             value=0,
                             marks={i: ''.format(i + 1) for i in range(6)},
                             id='slider'
@@ -203,10 +151,12 @@ def add_dash_yield(server, path_name = '/yieldapp/'):
                             ],
                             className='two columns offset-by-two'
                         ),
+                        html.Div([
                         dcc.Markdown(
                             id='text',
-                            className='six columns'
-                        ),
+                            className='seven columns'
+                        )],
+                            style={'font-size':'0.5em'}),
                     ],
                     className='row',
                     style={'margin-bottom': '10px'}
@@ -226,7 +176,7 @@ def add_dash_yield(server, path_name = '/yieldapp/'):
     # Make 3d graph
     @dash_app.callback(Output('graph', 'figure'), [Input('slider', 'value')])
     def make_graph(value):
-
+        print(value)
         if value is None:
             value = 0
 
@@ -387,6 +337,6 @@ def add_dash_yield(server, path_name = '/yieldapp/'):
             return max(0, slider - 1)
         if nxt > last_next:
             last_next = nxt
-            return min(5, slider + 1)
+            return min(1, slider + 1)
 
     return dash_app.server
