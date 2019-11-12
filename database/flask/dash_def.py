@@ -100,7 +100,7 @@ def add_dash_yield(server, path_name = '/yieldapp/'):
     Outputs:
         dash_app: dash server
     """
-    route_prefix='/api'
+    route_prefix=''#'/api'
     # create dash app
     dash_app = Dash(__name__,
             server=server,
@@ -241,7 +241,7 @@ def add_dash_yield(server, path_name = '/yieldapp/'):
                 y=y_secondary,
                 z=z_secondary,
                 hoverinfo='x+y',
-                line=dict(color='#444444')
+                line=dict(color='#444444', width=8)
             )
 
             data = [trace1, trace2]
