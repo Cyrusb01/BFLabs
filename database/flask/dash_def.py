@@ -100,7 +100,7 @@ def add_dash_yield(server, path_name = '/yieldapp/'):
     Outputs:
         dash_app: dash server
     """
-    route_prefix=''#'/api'
+    route_prefix='/api'
     # create dash app
     dash_app = Dash(__name__,
             server=server,
