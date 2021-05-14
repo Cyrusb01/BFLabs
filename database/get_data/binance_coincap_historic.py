@@ -62,30 +62,35 @@ def get_data(symbol,ts_start,ts_end):
         
         df['datetime'] = pd.to_datetime(df['timestamp'],unit='s',utc=True)
 
-        df.to_csv(f'data/daily_{symbol}_exid_0.csv',index=False,header=True)
+        df.to_csv(f'{symbol}_data.csv',index=False,header=True)
         
         print(symbol)
-        print(df.head(1))
+        print(df.head(10))
         print("---")
     else:
         print(res)
 
         
-if __name__ == '__main__':
+# if __name__ == '__main__':
+    
+#     for sdd in sc.slist:
 
-    for sdd in sc.slist:
+#         if sdd['exid'] != 0:
+#             continue
 
-        if sdd['exid'] != 0:
-            continue
-
-        if sdd['symb'] != 'EOS-USDT':
-            continue
+#         if sdd['symb'] != 'EOS-USDT':
+#             continue
         
-        ts_start = int(parse('2017-01-01T00:00:00Z').timestamp())
-        ts_end = int(parse('2019-01-01T00:00:00Z').timestamp())
-#        ts_end = int(parse(datetime.datetime\
-#                       .now(tz=pytz.utc).strftime('%Y-%m-%dT00:00:00Z')).timestamp())
+#         ts_start = int(parse('2017-01-01T00:00:00Z').timestamp())
+#         ts_end = int(parse('2019-01-01T00:00:00Z').timestamp())
+# #        ts_end = int(parse(datetime.datetime\
+# #                       .now(tz=pytz.utc).strftime('%Y-%m-%dT00:00:00Z')).timestamp())
 
-        get_data(sdd['symb'],ts_start,ts_end)
-        time.sleep(5)
+#         get_data(sdd['symb'],ts_start,ts_end)
+#         time.sleep(5)
 
+ts_start = int(parse('2020-01-01T00:00:00Z').timestamp())
+ts_end = int(parse('2021-05-13T00:00:00Z').timestamp())
+pairs = ['BTC-USDT', 'BCHABC-USDT', 'TRX-USDT', 'IOTA-USDT', 'XLM-USDT', 'EOS-USDT','XRP-USDT', 'ADA-USDT','LTC-USDT', 'NEO-USDT', 'BNB-USDT', 'ETH-USDT']
+for pair in pairs:
+    get_data(pair, ts_start, ts_end)

@@ -3,25 +3,27 @@ import numpy as np
 import plotly
 import plotly.graph_objs as go
 import json
+import datetime
 from variables import IMG, RANGE, ANNOT, PLOT_CONFIG, XAXIS, YAXIS, COLORSCALE
 
-def get_coin_data(symbol, db, coindata_day):
-    query = db.session.query(coindata_day)\
-            .filter(coindata_day.symbolpair == symbol.upper())\
-            .order_by(coindata_day.timestamp)
-    try:
-        df = pd.read_sql(query.statement, query.session.bind)
-    
-    except:
-        rd = {'msg': 'database query failed'}
-        return json.dumps(rd)
-        
-    if df is None or len(df) < 1:
-        rd = {'msg': 'no data'}
-        return json.dumps(rd)
 
+def get_coin_data(symbol, db, coindata_day):
+    # query = db.session.query(coindata_day)\
+    #         .filter(coindata_day.symbolpair == symbol.upper())\
+    #         .order_by(coindata_day.timestamp)
+    # try:
+    #     df = pd.read_sql(query.statement, query.session.bind)
+    
+    # except:
+    #     rd = {'msg': 'database query failed'}
+    #     return json.dumps(rd)
+        
+    # if df is None or len(df) < 1:
+    #     rd = {'msg': 'no data'}
+    #     return json.dumps(rd)
+    df = pd.read_csv(f'{symbol}_data.csv')
     res = df[ ['timestamp','price_open','price_high',\
-               'price_low','price_close','n_trades',\
+               'price_low','price_close',\
                'volume' ]].to_dict(orient='list')
     return res
 
@@ -254,7 +256,8 @@ def create_corr(pairs, db, coindata_day):
     vals = dict()
     for sp in pairs:
         data = get_coin_data(sp, db, coindata_day)
-        if(len(data)<7): #bad data
+        if(len(data)<6): #bad data
+            print(sp, " ", len(data))
             continue
         df = pd.DataFrame(data)
         df.set_index('timestamp', inplace=True)
@@ -266,10 +269,15 @@ def create_corr(pairs, db, coindata_day):
     df_.columns = [col.split("-",1)[0] for col in df_.columns]
     df_ = df_.round(3).rolling(180).corr().dropna(how='all')
     
+    print("Hi")
+    print(df_)
     return df_
 
 def graph_heatmap(df, date):
     corr_mtx = df.loc[date].values
+    print("Corr MTX")
+    print(date)
+    print(corr_mtx)
     text_info = np.round(corr_mtx, decimals=5).astype(str)
 
     x = 0
@@ -303,7 +311,7 @@ def graph_heatmap(df, date):
     graphs=[
         {
             'data':[go.Heatmap(z=corr_mtx, x=labels, y=labels, text = text_info,\
-                    hoverinfo='text',colorscale=[[0.,'#ebcd86'],[1,'#37475b']])],
+                    hoverinfo='text',colorscale=[[0.,'#00eead'],[1,'#131c4f']])],
             'layout': layout
         }
     ]
@@ -313,37 +321,37 @@ def graph_heatmap(df, date):
 
 custom_scale = [
         # Let first 10% (0.1) of the values have color rgb(0, 0, 0)
-        [0, '#ebcd86'],
-        [0.1, '#ebcd86'],
+        [0, '#00eead'],
+        [0.1, '#00eead'],
 
         # Let values between 10-20% of the min and max of z
         # have color rgb(20, 20, 20)
-        [0.1, '#d6bd82'],
-        [0.2, '#d6bd82'],
+        [0.1, '#00d8b7'],
+        [0.2, '#00d8b7'],
 
         # Values between 20-30% of the min and max of z
         # have color rgb(40, 40, 40)
-        [0.2, '#c3ad7d'],
-        [0.3, '#c3ad7d'],
+        [0.2, '#00c0bd'],
+        [0.3, '#00c0bd'],
 
-        [0.3, '#af9e79'],
-        [0.4, '#af9e79'],
+        [0.3, '#00a9be'],
+        [0.4, '#00a9be'],
 
-        [0.4, '#9b8e74'],
-        [0.5, '#9b8e74'],
+        [0.4, '#0090b9'],
+        [0.5, '#0090b9'],
 
-        [0.5, '#877f6f'],
-        [0.6, '#877f6f'],
+        [0.5, '#0078ad'],
+        [0.6, '#0078ad'],
 
-        [0.6, '#73716a'],
-        [0.7, '#73716a'],
+        [0.6, '#00609c'],
+        [0.7, '#00609c'],
 
-        [0.7, '#606265'],
-        [0.8, '#606265'],
+        [0.7, '#004986'],
+        [0.8, '#004986'],
 
-        [0.8, '#4c5560'],
-        [0.9, '#4c5560'],
+        [0.8, '#00326b'],
+        [0.9, '#00326b'],
 
-        [0.9, '#37475b'],
-        [1.0, '#37475b']
+        [0.9, '#131c4f'],
+        [1.0, '#131c4f']
     ]
