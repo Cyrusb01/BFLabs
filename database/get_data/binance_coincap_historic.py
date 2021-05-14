@@ -90,7 +90,7 @@ def get_data(symbol,ts_start,ts_end):
 #         time.sleep(5)
 
 ts_start = int(parse('2020-01-01T00:00:00Z').timestamp())
-ts_end = int(parse('2021-05-13T00:00:00Z').timestamp())
+ts_end = int(parse('2021-05-14T00:00:00Z').timestamp())
 pairs = ['BTC-USDT', 'BCHABC-USDT', 'TRX-USDT', 'IOTA-USDT', 'XLM-USDT', 'EOS-USDT','XRP-USDT', 'ADA-USDT','LTC-USDT', 'NEO-USDT', 'BNB-USDT', 'ETH-USDT']
 for pair in pairs:
     get_data(pair, ts_start, ts_end)
