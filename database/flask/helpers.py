@@ -93,7 +93,7 @@ def graph_volatility(df, coins, xd):
     
     layout = dict(
         images=[dict(
-            source="/static/main-logo-black_small.png",
+            source="/static/onramp-logo.png",
             xref="paper", yref="paper",
             x=1.05, y=1.05,
             sizex=0.21, sizey=0.21,
@@ -185,7 +185,7 @@ def graph_timeline(corr_df, xd):
     layout = dict(
         font=_font,
         images=[dict(
-            source="/static/main-logo-black_small.png",
+            source="/static/onramp-logo.png",
             xref="paper", yref="paper",
             x=1.08, y=1.1,
             sizex=0.25, sizey=0.25,
@@ -289,7 +289,7 @@ def graph_heatmap(df, date):
         
     labels=df.columns
     layout = go.Layout(images=[dict(
-            source="/static/main-logo-black_small.png",
+            source="/static/onramp-logo.png",
             xref="paper", yref="paper",
             x=1.12, y=1.08,
             sizex=0.25, sizey=0.25,
