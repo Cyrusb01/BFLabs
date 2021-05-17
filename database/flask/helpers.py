@@ -21,7 +21,7 @@ def get_coin_data(symbol, db, coindata_day):
     # if df is None or len(df) < 1:
     #     rd = {'msg': 'no data'}
     #     return json.dumps(rd)
-    df = pd.read_csv(f'{symbol}_data.csv')
+    df = pd.read_csv(f'datafiles/{symbol}_data.csv')
     res = df[ ['timestamp','price_open','price_high',\
                'price_low','price_close',\
                'volume' ]].to_dict(orient='list')
