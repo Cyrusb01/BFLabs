@@ -36,6 +36,7 @@ def close_connection(exception):
         db.close()
 
 
+
 @app.route('/')
 @basic_auth.required
 def index():
