@@ -71,7 +71,6 @@ def update_df(d):
 
     LAST_UPDATE_REL_PERF = d
 
-
 def update_heatmap(d):
     #define vars as in global namespace
     global corr_df
@@ -96,8 +95,6 @@ def update_heatmap(d):
     graphJSON_timeline = graphJSON
 
     LAST_UPDATE_HEATMAP = d #update last update
-
-
 
 def update_volatility(d):
     global corr_df

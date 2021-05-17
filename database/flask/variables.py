@@ -1,6 +1,6 @@
 
 IMG = [dict(
-            source="/static/main-logo-black.png",
+            source="/static/onramp-logo.png",
             xref="paper", yref="paper",x=1.05, y=1.05,
             sizex=0.25, sizey=0.25,xanchor="right", yanchor="bottom")]
 
