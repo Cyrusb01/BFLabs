@@ -8,89 +8,94 @@ import datetime
 #import symbolconfig as sc
 import time
 from dateutil.parser import parse
+import bt 
 
-sd = {}
-sd['ETH'] = 'ethereum'
-sd['EOS'] = 'eos'
-sd['USDT'] = 'tether'
-sd['TRX'] = 'tron'
-sd['IOTA'] = 'iota'
-sd['XLM'] = 'stellar'
-sd['XRP'] = 'ripple'
-sd['LTC'] = 'litecoin'
-sd['ADA'] = 'cardano'
-sd['NEO'] = 'neo'
-sd['BCHABC'] = 'bitcoin-cash'
-sd['BNB'] = 'binance-coin'
-sd['BTC'] = 'bitcoin'
-sd['EOS'] = 'eos'
 
-def get_data(symbol,ts_start,ts_end):
+data = bt.get('spy', start='2020-01-01')
+data.to_csv('datafiles/SPY_data.csv',header=True)
 
-    base,quote = symbol.split('-')
+# sd = {}
+# sd['ETH'] = 'ethereum'
+# sd['EOS'] = 'eos'
+# sd['USDT'] = 'tether'
+# sd['TRX'] = 'tron'
+# sd['IOTA'] = 'iota'
+# sd['XLM'] = 'stellar'
+# sd['XRP'] = 'ripple'
+# sd['LTC'] = 'litecoin'
+# sd['ADA'] = 'cardano'
+# sd['NEO'] = 'neo'
+# sd['BCHABC'] = 'bitcoin-cash'
+# sd['BNB'] = 'binance-coin'
+# sd['BTC'] = 'bitcoin'
+# sd['EOS'] = 'eos'
 
-    baseId = sd[base]
-    quoteId = sd[quote]  
+# def get_data(symbol,ts_start,ts_end):
+
+#     base,quote = symbol.split('-')
+
+#     baseId = sd[base]
+#     quoteId = sd[quote]  
     
-    url = "https://api.coincap.io/v2/candles?exchange=binance&interval=d1"\
-                                   f"&baseId={baseId}&quoteId={quoteId}"\
-                                   f"&start={ts_start*1000}"\
-                                   f"&end={ts_end*1000}"
+#     url = "https://api.coincap.io/v2/candles?exchange=binance&interval=d1"\
+#                                    f"&baseId={baseId}&quoteId={quoteId}"\
+#                                    f"&start={ts_start*1000}"\
+#                                    f"&end={ts_end*1000}"
 
-    print(url)
+#     print(url)
     
-    try:
-        res = requests.get(url)
-        res = res.json()
+#     try:
+#         res = requests.get(url)
+#         res = res.json()
 
-        if 'data' not in res.keys():
-            print(res)
+#         if 'data' not in res.keys():
+#             print(res)
         
-    except:
-        print("do something")
-        return
+#     except:
+#         print("do something")
+#         return
     
-    if len(res['data']) > 0:
-        df = pd.DataFrame(res['data'])
-        df.rename(columns={'open':'price_open',
-                           'close':'price_close',
-                           'low':'price_low',
-                           'high':'price_high',
-                           'period':'timestamp'},inplace=True)
+#     if len(res['data']) > 0:
+#         df = pd.DataFrame(res['data'])
+#         df.rename(columns={'open':'price_open',
+#                            'close':'price_close',
+#                            'low':'price_low',
+#                            'high':'price_high',
+#                            'period':'timestamp'},inplace=True)
 
-        df['timestamp'] = df['timestamp'] // 1000
+#         df['timestamp'] = df['timestamp'] // 1000
         
-        df['datetime'] = pd.to_datetime(df['timestamp'],unit='s',utc=True)
+#         df['datetime'] = pd.to_datetime(df['timestamp'],unit='s',utc=True)
 
-        df.to_csv(f'datafiles/{symbol}_data.csv',index=False,header=True)
+#         df.to_csv(f'datafiles/{symbol}_data.csv',index=False,header=True)
         
-        print(symbol)
-        print(df.head(10))
-        print("---")
-    else:
-        print(res)
+#         print(symbol)
+#         print(df.head(10))
+#         print("---")
+#     else:
+#         print(res)
 
         
-# if __name__ == '__main__':
+# # if __name__ == '__main__':
     
-#     for sdd in sc.slist:
+# #     for sdd in sc.slist:
 
-#         if sdd['exid'] != 0:
-#             continue
+# #         if sdd['exid'] != 0:
+# #             continue
 
-#         if sdd['symb'] != 'EOS-USDT':
-#             continue
+# #         if sdd['symb'] != 'EOS-USDT':
+# #             continue
         
-#         ts_start = int(parse('2017-01-01T00:00:00Z').timestamp())
-#         ts_end = int(parse('2019-01-01T00:00:00Z').timestamp())
-# #        ts_end = int(parse(datetime.datetime\
-# #                       .now(tz=pytz.utc).strftime('%Y-%m-%dT00:00:00Z')).timestamp())
+# #         ts_start = int(parse('2017-01-01T00:00:00Z').timestamp())
+# #         ts_end = int(parse('2019-01-01T00:00:00Z').timestamp())
+# # #        ts_end = int(parse(datetime.datetime\
+# # #                       .now(tz=pytz.utc).strftime('%Y-%m-%dT00:00:00Z')).timestamp())
 
-#         get_data(sdd['symb'],ts_start,ts_end)
-#         time.sleep(5)
+# #         get_data(sdd['symb'],ts_start,ts_end)
+# #         time.sleep(5)
 
-ts_start = int(parse('2020-01-01T00:00:00Z').timestamp())
-ts_end = int(parse('2021-05-19T00:00:00Z').timestamp())
-pairs = ['BTC-USDT', 'BCHABC-USDT', 'TRX-USDT', 'IOTA-USDT', 'XLM-USDT', 'EOS-USDT','XRP-USDT', 'ADA-USDT','LTC-USDT', 'NEO-USDT', 'BNB-USDT', 'ETH-USDT']
-for pair in pairs:
-    get_data(pair, ts_start, ts_end)
+# ts_start = int(parse('2020-01-01T00:00:00Z').timestamp())
+# ts_end = int(parse('2021-05-19T00:00:00Z').timestamp())
+# pairs = ['BTC-USDT', 'BCHABC-USDT', 'TRX-USDT', 'IOTA-USDT', 'XLM-USDT', 'EOS-USDT','XRP-USDT', 'ADA-USDT','LTC-USDT', 'NEO-USDT', 'BNB-USDT', 'ETH-USDT']
+# for pair in pairs:
+#     get_data(pair, ts_start, ts_end)

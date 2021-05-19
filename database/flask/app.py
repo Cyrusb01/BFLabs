@@ -23,7 +23,7 @@ from helpers_dashboard import graph_pie
 from variables import IMG, RANGE, ANNOT, PLOT_CONFIG, XAXIS, YAXIS, COLORSCALE
 import datetime
 import pytz
-import config as cf
+#import config as cf
 import shutil
 # from dash_def import add_dash_yield
 
@@ -101,8 +101,24 @@ def update_pie(d):
     #define vars as in global namespace
     global ids_pie
     global graphJSON_pie
- 
 
+    ids, graphJSON = graph_pie(d)
+    ids_pie = ids
+    graphJSON_pie = graphJSON
+
+def update_scatter(d):
+    #define vars as in global namespace
+    global ids_pie
+    global graphJSON_pie
+
+    ids, graphJSON = graph_pie(d)
+    ids_pie = ids
+    graphJSON_pie = graphJSON
+
+def update_bar(d):
+    #define vars as in global namespace
+    global ids_pie
+    global graphJSON_pie
 
     ids, graphJSON = graph_pie(d)
     ids_pie = ids

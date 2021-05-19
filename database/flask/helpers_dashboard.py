@@ -9,7 +9,7 @@ import plotly
 import plotly.graph_objs as go
 import plotly.express as px
 import json
-import datetime
+from datetime import datetime
 import bt 
 from plotly.graph_objs import *
 
@@ -24,14 +24,14 @@ dic = {'60/40' : .95, 'Bitoin': .05}
 
 def graph_pie(percent_dictionary):
 
-    
+    colors_pie = ['#a90bfe', '#f2a900'] #BTC Orange
     assets = list(percent_dictionary.keys())
 
     percents = list(percent_dictionary.values())
     #print(percents)
     
     fig = px.pie( values = percents, names = assets, color = assets,
-                            color_discrete_sequence= colors,
+                            color_discrete_sequence= colors_pie,
                             title="Portfolio Allocation",
                             )
     fig.update_traces(hovertemplate='%{value:.0%}')
@@ -60,7 +60,7 @@ def graph_pie(percent_dictionary):
     fig.update_traces(marker=dict(line=dict(color='white', width=1.3)))
     fig.update_layout(titlefont=dict(size =24, color='black'))
     
-    #fig.show()
+    fig.show()
     graphs=[
         {
             'data': fig,
@@ -137,7 +137,7 @@ def graph_scatter_plot(risk_dic, return_dic):
     return fig
 
 fig = graph_scatter_plot(risk_dic, return_dic)
-#fig.show()
+fig.show()
 
 #------------------------------------------------------BAR CHART--------------------------------------
 x_axis_rr_ss = ['Ann. Return', 'Ann. Risk']
@@ -218,43 +218,63 @@ fig = graph_barchart(x_axis_rr_ss, y_combined, y_6040, y_spy)
 
 #----------------------------------------------------------LINE CHART ----------------------------------------------------------------------------
 
+#%%
+
+df = pd.read_csv("Slider_data.csv", usecols = ['Date','TraditionalOnly', 'SP500Only', 'd1', 'd2', 'd3', 'd4', 'd5', 'd6'])
+df['Date'] = pd.to_datetime(df['Date'], unit = 'ms')
+df = df.set_index('Date')
 
 
-
-
-# def graph_line_chart(results_list):
-#     color_dict = {}
-#     result_final = pd.DataFrame()
-#     for i in range(len(results_list)):
-
-#         temp = results_list[i]._get_series(None).rebase()
-#         result_final = pd.concat([result_final, temp], axis = 1) #result dataframe
-#         color_dict[result_final.columns[i]] = colors[i] #colors
-
-#     fig = px.line(result_final, labels=dict(index="Click Legend Icons to Toggle Viewing", value="", variable=""),
-#                     title="Portfolio Performance",
-#                     color_discrete_map=color_dict,
-#                     template="simple_white"
-#                     )
+def graph_line_chart(df, choice):
+    df = df[['TraditionalOnly', 'SP500Only', choice]]
+    df.columns = ['Traditional Only', 'SP500 Only', "Combined Portfolio"]
+    color_dict = {}
+    color_dict['Traditional Only'] = colors[0]
+    color_dict['SP500 Only'] = colors[1]
+    color_dict['Combined Portfolio'] = colors[2]
     
-#     fig.update_yaxes( # the y-axis is in dollars
-#         tickprefix="$", showgrid=True
-#     )
-#     x = .82
-#     fig.update_layout(legend=dict(
-#         orientation="h",
-#         yanchor="bottom",
-#         y= -.25,
-#         xanchor="right",
-#         x=.82
-#     ),
-#     title={
-#             'text': "Portfolio Performance",
-#             'y':.99,
-#             'x':0.5,
-#             'xanchor': 'center',
-#             'yanchor': 'top'},)
-#     #fig.update_layout(height = 500)
-#     fig.update_layout(margin = dict(l=0, r=0, t=20, b=10))
-#     return fig
+    # for i in range(len(results_list)):
 
+    #     temp = results_list[i]._get_series(None).rebase()
+    #     result_final = pd.concat([result_final, temp], axis = 1) #result dataframe
+    #     color_dict[result_final.columns[i]] = colors[i] #colors
+
+    fig = px.line(df, labels={
+                            "value": "",
+                            "Date": "",
+                            "color" : "",
+                            "variable": ""
+                            },
+                    title="Portfolio Performance",
+                    color_discrete_map=color_dict,
+                    template="simple_white"
+                    )
+    
+    fig.update_yaxes( # the y-axis is in dollars
+        tickprefix="$", showgrid=True
+    )
+    x = .82
+    fig.update_layout(legend=dict(
+        orientation="h",
+        yanchor="bottom",
+        y= -.25,
+        xanchor="right",
+        x=.82
+    ),
+    font = dict(
+        family="Circular STD",
+        color="black"
+    ),
+    title={
+            'text': "<b>Portfolio Performance<b>",
+            'y':.85,
+            'x':0.5,
+            'xanchor': 'center',
+            'yanchor': 'top'},)
+    fig.update_yaxes(side = "right", nticks = 4)
+    fig.update_layout(titlefont=dict(size =24, color='black'))
+    #fig.update_layout(margin = dict(l=10, r=0, t=20, b=10))
+    return fig
+
+graph_line_chart(df, 'd3')
+# %%
