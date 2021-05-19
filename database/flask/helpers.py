@@ -59,11 +59,16 @@ def graph_volatility(df, coins, xd):
                     ticks='outside', tickcolor='#53585f',ticklen=8, tickwidth=3,\
                     tick0=0, tickprefix="                 ")
     vols = [14,30,90]
-    
+    colors = 3*['black', '#033F63' , '#28666E', '#7C9885', '#B5B682', '#FEDC97', '#F6AE2D', '#F26419', '#5F0F40', '#9A031E', '#CB793A' ]
+    print(len(colors))
+
+    index = 0
     data=[]
     for i in df.columns:
         data.append(go.Scatter(x=list(df.index),
-                       y=list(df[i]), name=i.split('_',1)[0], visible=False))
+                       y=list(df[i]), name=i.split('_',1)[0], visible=False, line_color = colors[index]))
+        index += 1
+        print(index)
 
     num_coins = len(coins)
     
@@ -319,65 +324,7 @@ def graph_heatmap(df, date):
     graphJSON = json.dumps(graphs, cls=plotly.utils.PlotlyJSONEncoder)
     return ids, graphJSON
 
-def graph_pie(percent_dictionary):
 
-    fig = px.pie( values = percent_list, names = stock_list, color = stock_list,
-                            color_discrete_sequence= pie_colors,
-                            title="Portfolio Allocation")
-    fig.update_layout(
-    title={
-        'text': "Portfolio Allocation",
-        'y':0.87,
-        'x':0.49,
-        'xanchor': 'center',
-        'yanchor': 'top'},
-    legend=dict(
-    orientation="h",
-    yanchor="bottom",
-    y=-.3,
-    xanchor="left",
-    x=0.0))
-    
-    fig.update_traces(marker=dict(line=dict(color='white', width=1.3)))
-    
-
-    return fig
-
-def graph_line_chart(results_list):
-    color_dict = {}
-    result_final = pd.DataFrame()
-    for i in range(len(results_list)):
-
-        temp = results_list[i]._get_series(None).rebase()
-        result_final = pd.concat([result_final, temp], axis = 1) #result dataframe
-        color_dict[result_final.columns[i]] = colors[i] #colors
-
-    fig = px.line(result_final, labels=dict(index="Click Legend Icons to Toggle Viewing", value="", variable=""),
-                    title="Portfolio Performance",
-                    color_discrete_map=color_dict,
-                    template="simple_white"
-                    )
-    
-    fig.update_yaxes( # the y-axis is in dollars
-        tickprefix="$", showgrid=True
-    )
-    x = .82
-    fig.update_layout(legend=dict(
-        orientation="h",
-        yanchor="bottom",
-        y= -.25,
-        xanchor="right",
-        x=.82
-    ),
-    title={
-            'text': "Portfolio Performance",
-            'y':.99,
-            'x':0.5,
-            'xanchor': 'center',
-            'yanchor': 'top'},)
-    #fig.update_layout(height = 500)
-    fig.update_layout(margin = dict(l=0, r=0, t=20, b=10))
-    return fig
 
 custom_scale = [
         # Let first 10% (0.1) of the values have color rgb(0, 0, 0)

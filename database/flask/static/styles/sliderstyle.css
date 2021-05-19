@@ -1,0 +1,27 @@
+    #slider {
+	    margin: 0 auto;
+	    width: 30%;
+	    padding: 0 0% 0 0%;
+	    background: #A9A9A9;
+    }
+
+    #slider .ui-state-default, .ui-widget-content .ui-state-default {
+		background: none;
+		background-color: #000000;
+    padding: 2px;
+	}
+
+    text[text-anchor=end] {
+        display:none
+    }
+
+body{
+      background-image: url(./realityshareslogo.png);
+      background-repeat: no-repeat;
+      background-attachment: fixed;
+      background-position: center;
+      background-size: contain;
+      background-color: rgba(255, 255, 255, 0.95);
+      background-blend-mode: lighten;
+      opacity: 0.9;
+    }

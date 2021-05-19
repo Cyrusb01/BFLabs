@@ -19,6 +19,7 @@ import logging
 from logging.handlers import RotatingFileHandler
 from werkzeug.middleware.proxy_fix import ProxyFix
 from helpers import graph_heatmap, create_corr, volatility, calc_volatility, graph_volatility, get_coin_data, graph_timeline
+from helpers_dashboard import graph_pie
 from variables import IMG, RANGE, ANNOT, PLOT_CONFIG, XAXIS, YAXIS, COLORSCALE
 import datetime
 import pytz
@@ -96,6 +97,18 @@ def update_heatmap(d):
 
     LAST_UPDATE_HEATMAP = d #update last update
 
+def update_pie(d):
+    #define vars as in global namespace
+    global ids_pie
+    global graphJSON_pie
+ 
+
+
+    ids, graphJSON = graph_pie(d)
+    ids_pie = ids
+    graphJSON_pie = graphJSON
+
+
 def update_volatility(d):
     global corr_df
     global LAST_UPDATE_VOLATILITY
@@ -156,6 +169,13 @@ def heatmap():
 
 
     return render_template('heatmap.html', ids=ids_heatmap, graphJSON=graphJSON_heatmap)
+@app.route('/api/piechart')
+def piechart():
+    dic = {'60/40' : .95, 'Bitoin': .05}
+    update_pie(dic)
+
+
+    return render_template('piechart.html', ids=ids_pie, graphJSON=graphJSON_pie)
 	
 
 # @app.route('/api/v1/load_daily',methods=['GET'])
