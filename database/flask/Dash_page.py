@@ -23,7 +23,7 @@ df = df.set_index('Date')
 df_stats = pd.read_csv("C:\Onramp\BFLabs(Cyrus CSV)\datafiles\Slider_data.csv", usecols = ['AnnReturn',	'AnnRisk','SharpeRatio','SortinoRatio','ReturnTraditional','ReturnSP500','RiskTraditional',	'RiskSP500','SharpeTraditional','SharpeSP500','SortinoTraditional',	'SortinoSP500'])
 df_stats = df_stats.dropna()
 
-#------------------------------------------------------------------SCATTER------------------------------------------------------------------------------------------------------------------
+
 colors = ['#a90bfe', '#7540ee', '#3fb6dc'] 
 
 
@@ -115,7 +115,7 @@ def update_graphs(value):
     
     #------------------------------------------------------------------------------Pie Chart ---------------------------------------------------------------------------
 
-    percent_dict = {'60/40' : 1-float(value)/100, 'Bitoin': float(value)/100}
+    percent_dict = {'60/40' : 1-float(value)/100, 'Bitcoin': float(value)/100}
 
     def graph_pie(percent_dictionary):
 
@@ -241,7 +241,7 @@ def update_graphs(value):
         fig.update_xaxes(showgrid = False)
         #print("plotly express hovertemplate:", fig.data[0].hovertemplate)
         fig.update_traces(hovertemplate='Annual Risk = %{x:.0%}<br>Annual Return = %{y:.0%}')
-
+        
         fig.update_layout( 
         title={
             'text': "<b>Risk vs. Return<b>",
@@ -315,7 +315,7 @@ def update_graphs(value):
                     "Type": "",
                     "Values": "",
                     "Strategy" : ""
-                    }, width= 500, height = 400)
+                    }, width= 500, height = 550)
         fig.update_traces(texttemplate='%{y:.2%}', textposition='outside')
         fig.update_layout(uniformtext_minsize=16, uniformtext_mode='hide')
         fig.update_traces(hovertemplate='%{y:.0%}')
@@ -348,7 +348,7 @@ def update_graphs(value):
         })
         fig.update_layout(xaxis_tickfont_size=19)
         fig.update_layout(titlefont=dict(size =24, color='black'))
-        fig.update_layout(margin = dict(l=10, r=0, t=50, b=0))
+        fig.update_layout(margin = dict(l=10, r=0, t=100, b=0))
 
         return fig
 
